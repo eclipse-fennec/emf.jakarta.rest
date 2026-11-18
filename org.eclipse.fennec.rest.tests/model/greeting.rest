@@ -2,6 +2,10 @@
 <rest:RestApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:rest="https://eclipse.org/fennec/rest/1.0.0"
     name="greeting" basePath="greeting">
+  <!-- the authentication filter attaches to applications with this property, and the
+       application is only deployed once that filter is there -->
+  <extensionSelect>(osgi.jakartars.name=testAuth)</extensionSelect>
+  <properties key="test.secured" value="true"/>
   <resources path="greetings">
     <target href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService"/>
     <methods httpMethod="GET" path="{name}">
@@ -35,6 +39,17 @@
       <produces>application/json</produces>
       <parameters source="BODY">
         <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/reply/greeting"/>
+      </parameters>
+    </methods>
+  </resources>
+  <resources path="account">
+    <rolesAllowed>user</rolesAllowed>
+    <target href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService"/>
+    <methods httpMethod="GET" path="whoami">
+      <operation href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/whoami"/>
+      <produces>text/plain</produces>
+      <parameters source="PRINCIPAL">
+        <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/whoami/user"/>
       </parameters>
     </methods>
   </resources>

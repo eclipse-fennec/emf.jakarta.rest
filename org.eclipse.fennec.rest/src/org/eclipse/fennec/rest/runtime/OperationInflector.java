@@ -13,6 +13,7 @@
 package org.eclipse.fennec.rest.runtime;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,16 +28,19 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.rest.model.rest.ParameterBinding;
+import org.eclipse.fennec.rest.model.rest.ParameterSource;
 import org.glassfish.jersey.process.Inflector;
 import org.glassfish.jersey.server.ContainerRequest;
 
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * Handles the requests of one modelled resource method: resolves the arguments from the
@@ -57,14 +61,18 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 	private final EOperation operation;
 	private final ParameterBinding[] bindings;
 	private final int successStatus;
+	private final AccessRule access;
 
 	/**
 	 * @param target the class to instantiate per request
 	 * @param operation the operation to invoke
 	 * @param bindings one entry per parameter of the operation, {@code null} for an unbound one
 	 * @param successStatus the status of a successful invocation, 0 for the default
+	 * @param access the access rule in effect for the method
 	 */
-	OperationInflector(EClass target, EOperation operation, ParameterBinding[] bindings, int successStatus) {
+	OperationInflector(EClass target, EOperation operation, ParameterBinding[] bindings, int successStatus,
+			AccessRule access) {
+		this.access = access;
 		this.target = target;
 		this.operation = operation;
 		this.bindings = bindings;
@@ -73,10 +81,12 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 
 	@Override
 	public Response apply(ContainerRequestContext request) {
+		// first of all: a caller that is not allowed must not learn anything about the request
+		access.check(request.getSecurityContext());
 		EList<Object> arguments = new BasicEList<>(bindings.length);
 		List<EParameter> parameters = operation.getEParameters();
 		for (int i = 0; i < bindings.length; i++) {
-			arguments.add(bindings[i] == null ? null : resolve(parameters.get(i), bindings[i], request));
+			arguments.add(bindings[i] == null ? null : required(parameters.get(i), bindings[i], request));
 		}
 		EObject instance = EcoreUtil.create(target);
 		requireDelegate(instance);
@@ -112,6 +122,19 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		}
 	}
 
+	/** Resolves the argument and refuses the request if a mandatory one is missing. */
+	private Object required(EParameter parameter, ParameterBinding binding, ContainerRequestContext request) {
+		Object value = resolve(parameter, binding, request);
+		boolean missing = value == null || value instanceof List<?> list && list.isEmpty();
+		if (missing && parameter.getLowerBound() >= 1) {
+			if (binding.getSource() == ParameterSource.PRINCIPAL) {
+				throw new NotAuthorizedException(Response.status(Response.Status.UNAUTHORIZED).build());
+			}
+			throw new BadRequestException("The mandatory parameter '" + parameter.getName() + "' is missing");
+		}
+		return value;
+	}
+
 	private Object resolve(EParameter parameter, ParameterBinding binding, ContainerRequestContext request) {
 		String name = binding.getName() == null || binding.getName().isBlank() ? parameter.getName()
 				: binding.getName();
@@ -119,6 +142,17 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		switch (binding.getSource()) {
 		case BODY:
 			return readBody(parameter, binding, request);
+		case PRINCIPAL:
+			SecurityContext security = request.getSecurityContext();
+			Principal principal = security == null ? null : security.getUserPrincipal();
+			if (principal == null) {
+				return null;
+			}
+			// a string parameter keeps the operation free of any security API
+			return String.class.getName().equals(parameter.getEType().getInstanceClassName()) ? principal.getName()
+					: principal;
+		case CONTEXT:
+			return RequestContexts.resolve(parameter.getEType().getInstanceClassName(), request);
 		case PATH:
 			literals = request.getUriInfo().getPathParameters().get(name);
 			break;

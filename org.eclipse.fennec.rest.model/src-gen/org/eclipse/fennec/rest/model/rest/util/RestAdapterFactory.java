@@ -78,6 +78,10 @@ public class RestAdapterFactory extends AdapterFactoryImpl {
 	protected RestSwitch<Adapter> modelSwitch =
 		new RestSwitch<Adapter>() {
 			@Override
+			public Adapter caseSecured(Secured object) {
+				return createSecuredAdapter();
+			}
+			@Override
 			public Adapter caseRestApplication(RestApplication object) {
 				return createRestApplicationAdapter();
 			}
@@ -112,6 +116,20 @@ public class RestAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.rest.model.rest.Secured <em>Secured</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.rest.model.rest.Secured
+	 * @generated
+	 */
+	public Adapter createSecuredAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.rest.model.rest.RestApplication <em>Application</em>}'.

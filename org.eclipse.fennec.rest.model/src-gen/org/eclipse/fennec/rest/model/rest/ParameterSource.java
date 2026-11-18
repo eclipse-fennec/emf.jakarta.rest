@@ -79,7 +79,33 @@ public enum ParameterSource implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	BODY(4, "BODY", "BODY");
+	BODY(4, "BODY", "BODY"),
+
+	/**
+	 * The '<em><b>PRINCIPAL</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The authenticated caller: its name for an EString parameter, the principal object otherwise.
+	 * <!-- end-model-doc -->
+	 * @see #PRINCIPAL_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	PRINCIPAL(5, "PRINCIPAL", "PRINCIPAL"),
+
+	/**
+	 * The '<em><b>CONTEXT</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * A Jakarta RS request object, selected by the instance class name of the parameter's data type: SecurityContext, UriInfo, HttpHeaders, Request or ContainerRequestContext. This ties the operation to REST; prefer PRINCIPAL and ordinary parameters where they suffice.
+	 * <!-- end-model-doc -->
+	 * @see #CONTEXT_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	CONTEXT(6, "CONTEXT", "CONTEXT");
 
 	/**
 	 * The '<em><b>QUERY</b></em>' literal value.
@@ -137,6 +163,34 @@ public enum ParameterSource implements Enumerator {
 	public static final int BODY_VALUE = 4;
 
 	/**
+	 * The '<em><b>PRINCIPAL</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The authenticated caller: its name for an EString parameter, the principal object otherwise.
+	 * <!-- end-model-doc -->
+	 * @see #PRINCIPAL
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PRINCIPAL_VALUE = 5;
+
+	/**
+	 * The '<em><b>CONTEXT</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * A Jakarta RS request object, selected by the instance class name of the parameter's data type: SecurityContext, UriInfo, HttpHeaders, Request or ContainerRequestContext. This ties the operation to REST; prefer PRINCIPAL and ordinary parameters where they suffice.
+	 * <!-- end-model-doc -->
+	 * @see #CONTEXT
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTEXT_VALUE = 6;
+
+	/**
 	 * An array of all the '<em><b>Parameter Source</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -149,6 +203,8 @@ public enum ParameterSource implements Enumerator {
 			HEADER,
 			COOKIE,
 			BODY,
+			PRINCIPAL,
+			CONTEXT,
 		};
 
 	/**
@@ -210,6 +266,8 @@ public enum ParameterSource implements Enumerator {
 			case HEADER_VALUE: return HEADER;
 			case COOKIE_VALUE: return COOKIE;
 			case BODY_VALUE: return BODY;
+			case PRINCIPAL_VALUE: return PRINCIPAL;
+			case CONTEXT_VALUE: return CONTEXT;
 		}
 		return null;
 	}

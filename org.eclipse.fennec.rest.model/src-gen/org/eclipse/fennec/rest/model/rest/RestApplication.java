@@ -13,8 +13,7 @@
 package org.eclipse.fennec.rest.model.rest;
 
 import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.common.util.EMap;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -33,6 +32,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * <ul>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.RestApplication#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.RestApplication#getBasePath <em>Base Path</em>}</li>
+ *   <li>{@link org.eclipse.fennec.rest.model.rest.RestApplication#getExtensionSelect <em>Extension Select</em>}</li>
+ *   <li>{@link org.eclipse.fennec.rest.model.rest.RestApplication#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.RestApplication#getResources <em>Resources</em>}</li>
  * </ul>
  *
@@ -41,7 +42,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface RestApplication extends EObject {
+public interface RestApplication extends Secured {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -92,6 +93,37 @@ public interface RestApplication extends EObject {
 	 * @generated
 	 */
 	void setBasePath(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Extension Select</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * LDAP filters for whiteboard extensions the application requires (osgi.jakartars.extension.select), e.g. an authentication filter.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Extension Select</em>' attribute list.
+	 * @see org.eclipse.fennec.rest.model.rest.RestPackage#getRestApplication_ExtensionSelect()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getExtensionSelect();
+
+	/**
+	 * Returns the value of the '<em><b>Properties</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Additional service properties of the whiteboard application. Extensions select the applications they attach to by these, e.g. a flag that marks the application as secured.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Properties</em>' map.
+	 * @see org.eclipse.fennec.rest.model.rest.RestPackage#getRestApplication_Properties()
+	 * @model mapType="org.eclipse.emf.ecore.EStringToStringMapEntry&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;"
+	 * @generated
+	 */
+	EMap<String, String> getProperties();
 
 	/**
 	 * Returns the value of the '<em><b>Resources</b></em>' containment reference list.

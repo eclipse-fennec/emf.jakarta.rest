@@ -88,6 +88,8 @@ public class RestFactoryImpl extends EFactoryImpl implements RestFactory {
 				return createHttpMethodFromString(eDataType, initialValue);
 			case RestPackage.PARAMETER_SOURCE:
 				return createParameterSourceFromString(eDataType, initialValue);
+			case RestPackage.ACCESS:
+				return createAccessFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -105,6 +107,8 @@ public class RestFactoryImpl extends EFactoryImpl implements RestFactory {
 				return convertHttpMethodToString(eDataType, instanceValue);
 			case RestPackage.PARAMETER_SOURCE:
 				return convertParameterSourceToString(eDataType, instanceValue);
+			case RestPackage.ACCESS:
+				return convertAccessToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -191,6 +195,26 @@ public class RestFactoryImpl extends EFactoryImpl implements RestFactory {
 	 * @generated
 	 */
 	public String convertParameterSourceToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Access createAccessFromString(EDataType eDataType, String initialValue) {
+		Access result = Access.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertAccessToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

@@ -76,21 +76,30 @@ public class RestSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case RestPackage.SECURED: {
+				Secured secured = (Secured)theEObject;
+				T result = caseSecured(secured);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case RestPackage.REST_APPLICATION: {
 				RestApplication restApplication = (RestApplication)theEObject;
 				T result = caseRestApplication(restApplication);
+				if (result == null) result = caseSecured(restApplication);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case RestPackage.REST_RESOURCE: {
 				RestResource restResource = (RestResource)theEObject;
 				T result = caseRestResource(restResource);
+				if (result == null) result = caseSecured(restResource);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case RestPackage.REST_METHOD: {
 				RestMethod restMethod = (RestMethod)theEObject;
 				T result = caseRestMethod(restMethod);
+				if (result == null) result = caseSecured(restMethod);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -102,6 +111,21 @@ public class RestSwitch<T> extends Switch<T> {
 			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Secured</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Secured</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSecured(Secured object) {
+		return null;
 	}
 
 	/**

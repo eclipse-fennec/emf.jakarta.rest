@@ -43,6 +43,11 @@ import jakarta.ws.rs.core.Application;
  * on, so EObjects can be read and written as request and response bodies.
  * </p>
  * <p>
+ * The {@code properties} of the model become service properties of the application and its
+ * {@code extensionSelect} the extensions it requires. That is how whiteboard extensions such
+ * as an authentication filter are attached to a modelled application.
+ * </p>
+ * <p>
  * A model is interpreted when its service arrives. A model that cannot be interpreted is logged
  * and skipped; it does not affect the other applications.
  * </p>
@@ -74,6 +79,12 @@ public class ModelledApplicationWhiteboard {
 			return;
 		}
 		Dictionary<String, Object> properties = new Hashtable<>();
+		// modelled properties first, so they cannot replace what the whiteboard relies on
+		model.getProperties().forEach(property -> properties.put(property.getKey(), property.getValue()));
+		if (!model.getExtensionSelect().isEmpty()) {
+			properties.put(JakartarsWhiteboardConstants.JAKARTA_RS_EXTENSION_SELECT,
+					model.getExtensionSelect().toArray(String[]::new));
+		}
 		properties.put(JakartarsWhiteboardConstants.JAKARTA_RS_NAME, model.getName());
 		properties.put(JakartarsWhiteboardConstants.JAKARTA_RS_APPLICATION_BASE,
 				model.getBasePath() == null ? "/" : model.getBasePath());

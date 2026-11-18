@@ -111,6 +111,13 @@ class ResourceInterpreter {
 				}
 				bodyBound = true;
 			}
+			if (binding.getSource() == ParameterSource.CONTEXT
+					&& !RequestContexts.supports(parameters.get(index).getEType().getInstanceClassName())) {
+				throw new IllegalArgumentException("Method '" + where + "' binds parameter '"
+						+ parameters.get(index).getName() + "' to the request context, but its type '"
+						+ parameters.get(index).getEType().getInstanceClassName() + "' is none of "
+						+ RequestContexts.supported());
+			}
 			bindings[index] = binding;
 		}
 
@@ -123,6 +130,7 @@ class ResourceInterpreter {
 		if (!produces.isEmpty()) {
 			builder.produces(produces.toArray(String[]::new));
 		}
-		builder.handledBy(new OperationInflector(target, operation, bindings, method.getSuccessStatus()));
+		builder.handledBy(new OperationInflector(target, operation, bindings, method.getSuccessStatus(),
+				AccessRule.of(method)));
 	}
 }

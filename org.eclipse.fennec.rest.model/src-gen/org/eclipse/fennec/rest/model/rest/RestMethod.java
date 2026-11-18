@@ -14,7 +14,6 @@ package org.eclipse.fennec.rest.model.rest;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -46,7 +45,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface RestMethod extends EObject {
+public interface RestMethod extends Secured {
 	/**
 	 * Returns the value of the '<em><b>Http Method</b></em>' attribute.
 	 * The default value is <code>"GET"</code>.

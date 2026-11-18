@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import org.eclipse.fennec.rest.model.rest.Access;
 import org.eclipse.fennec.rest.model.rest.HttpMethod;
 import org.eclipse.fennec.rest.model.rest.ParameterBinding;
 import org.eclipse.fennec.rest.model.rest.ParameterSource;
@@ -28,6 +29,7 @@ import org.eclipse.fennec.rest.model.rest.RestFactory;
 import org.eclipse.fennec.rest.model.rest.RestMethod;
 import org.eclipse.fennec.rest.model.rest.RestPackage;
 import org.eclipse.fennec.rest.model.rest.RestResource;
+import org.eclipse.fennec.rest.model.rest.Secured;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,6 +38,13 @@ import org.eclipse.fennec.rest.model.rest.RestResource;
  * @generated
  */
 public class RestPackageImpl extends EPackageImpl implements RestPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass securedEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -77,6 +86,13 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 	 * @generated
 	 */
 	private EEnum parameterSourceEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum accessEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -144,6 +160,36 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 	 * @generated
 	 */
 	@Override
+	public EClass getSecured() {
+		return securedEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSecured_Access() {
+		return (EAttribute)securedEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSecured_RolesAllowed() {
+		return (EAttribute)securedEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getRestApplication() {
 		return restApplicationEClass;
 	}
@@ -174,8 +220,28 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getRestApplication_ExtensionSelect() {
+		return (EAttribute)restApplicationEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getRestApplication_Properties() {
+		return (EReference)restApplicationEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EReference getRestApplication_Resources() {
-		return (EReference)restApplicationEClass.getEStructuralFeatures().get(2);
+		return (EReference)restApplicationEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -394,6 +460,16 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 	 * @generated
 	 */
 	@Override
+	public EEnum getAccess() {
+		return accessEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public RestFactory getRestFactory() {
 		return (RestFactory)getEFactoryInstance();
 	}
@@ -417,9 +493,15 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		isCreated = true;
 
 		// Create classes and their features
+		securedEClass = createEClass(SECURED);
+		createEAttribute(securedEClass, SECURED__ACCESS);
+		createEAttribute(securedEClass, SECURED__ROLES_ALLOWED);
+
 		restApplicationEClass = createEClass(REST_APPLICATION);
 		createEAttribute(restApplicationEClass, REST_APPLICATION__NAME);
 		createEAttribute(restApplicationEClass, REST_APPLICATION__BASE_PATH);
+		createEAttribute(restApplicationEClass, REST_APPLICATION__EXTENSION_SELECT);
+		createEReference(restApplicationEClass, REST_APPLICATION__PROPERTIES);
 		createEReference(restApplicationEClass, REST_APPLICATION__RESOURCES);
 
 		restResourceEClass = createEClass(REST_RESOURCE);
@@ -447,6 +529,7 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		// Create enums
 		httpMethodEEnum = createEEnum(HTTP_METHOD);
 		parameterSourceEEnum = createEEnum(PARAMETER_SOURCE);
+		accessEEnum = createEEnum(ACCESS);
 	}
 
 	/**
@@ -477,11 +560,20 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		restApplicationEClass.getESuperTypes().add(this.getSecured());
+		restResourceEClass.getESuperTypes().add(this.getSecured());
+		restMethodEClass.getESuperTypes().add(this.getSecured());
 
 		// Initialize classes, features, and operations; add parameters
+		initEClass(securedEClass, Secured.class, "Secured", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSecured_Access(), this.getAccess(), "access", "INHERIT", 1, 1, Secured.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSecured_RolesAllowed(), ecorePackage.getEString(), "rolesAllowed", null, 0, -1, Secured.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(restApplicationEClass, RestApplication.class, "RestApplication", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRestApplication_Name(), ecorePackage.getEString(), "name", null, 1, 1, RestApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRestApplication_BasePath(), ecorePackage.getEString(), "basePath", "/", 0, 1, RestApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRestApplication_ExtensionSelect(), ecorePackage.getEString(), "extensionSelect", null, 0, -1, RestApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRestApplication_Properties(), ecorePackage.getEStringToStringMapEntry(), null, "properties", null, 0, -1, RestApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRestApplication_Resources(), this.getRestResource(), null, "resources", null, 0, -1, RestApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(restResourceEClass, RestResource.class, "RestResource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -522,6 +614,14 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.HEADER);
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.COOKIE);
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.BODY);
+		addEEnumLiteral(parameterSourceEEnum, ParameterSource.PRINCIPAL);
+		addEEnumLiteral(parameterSourceEEnum, ParameterSource.CONTEXT);
+
+		initEEnum(accessEEnum, Access.class, "Access");
+		addEEnumLiteral(accessEEnum, Access.INHERIT);
+		addEEnumLiteral(accessEEnum, Access.PUBLIC);
+		addEEnumLiteral(accessEEnum, Access.AUTHENTICATED);
+		addEEnumLiteral(accessEEnum, Access.DENY);
 
 		// Create resource
 		createResource(eNS_URI);

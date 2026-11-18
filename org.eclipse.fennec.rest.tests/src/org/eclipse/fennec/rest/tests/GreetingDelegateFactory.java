@@ -50,6 +50,8 @@ public class GreetingDelegateFactory implements EOperation.Internal.InvocationDe
 		case "describe":
 			return (target, arguments) -> greeting(target, (String) arguments.get(0),
 					"Hello, " + arguments.get(0) + "!");
+		case "whoami":
+			return (target, arguments) -> "I am " + arguments.get(0);
 		case "reply":
 			return GreetingDelegateFactory::reply;
 		default:

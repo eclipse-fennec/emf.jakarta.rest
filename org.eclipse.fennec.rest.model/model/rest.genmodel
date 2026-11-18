@@ -23,10 +23,24 @@
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/HEADER"/>
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/COOKIE"/>
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/BODY"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/PRINCIPAL"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/CONTEXT"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="rest.ecore#//Access">
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//Access/INHERIT"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//Access/PUBLIC"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//Access/AUTHENTICATED"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//Access/DENY"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="rest.ecore#//Secured">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//Secured/access"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//Secured/rolesAllowed"/>
+    </genClasses>
     <genClasses ecoreClass="rest.ecore#//RestApplication">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestApplication/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestApplication/basePath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestApplication/extensionSelect"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rest.ecore#//RestApplication/properties"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rest.ecore#//RestApplication/resources"/>
     </genClasses>
     <genClasses ecoreClass="rest.ecore#//RestResource">

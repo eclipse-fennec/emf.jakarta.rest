@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
@@ -54,7 +53,7 @@ import org.eclipse.fennec.rest.model.rest.RestPackage;
  *
  * @generated
  */
-public class RestMethodImpl extends MinimalEObjectImpl.Container implements RestMethod {
+public class RestMethodImpl extends SecuredImpl implements RestMethod {
 	/**
 	 * The default value of the '{@link #getHttpMethod() <em>Http Method</em>}' attribute.
 	 * <!-- begin-user-doc -->

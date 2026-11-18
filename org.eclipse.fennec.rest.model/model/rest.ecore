@@ -7,7 +7,7 @@
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
     <details key="documentation" value="Binding model that describes a Jakarta RS application without any Java resource classes. It does not carry behaviour itself: every resource method points to an EOperation of a domain model, and the operation is executed through its EMF invocation delegate."/>
   </eAnnotations>
-  <eClassifiers xsi:type="ecore:EClass" name="RestApplication">
+  <eClassifiers xsi:type="ecore:EClass" name="RestApplication" eSuperTypes="#//Secured">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A modelled Jakarta RS application. One instance becomes one application at the Jakarta RS whiteboard."/>
     </eAnnotations>
@@ -22,10 +22,22 @@
         <details key="documentation" value="The application base path (osgi.jakartars.application.base)."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="extensionSelect" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="LDAP filters for whiteboard extensions the application requires (osgi.jakartars.extension.select), e.g. an authentication filter."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Additional service properties of the whiteboard application. Extensions select the applications they attach to by these, e.g. a flag that marks the application as secured."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
         eType="#//RestResource" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="RestResource">
+  <eClassifiers xsi:type="ecore:EClass" name="RestResource" eSuperTypes="#//Secured">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A root resource. It binds a path to an EClass of a domain model, whose EOperations are exposed by the contained resource methods."/>
     </eAnnotations>
@@ -55,7 +67,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="methods" upperBound="-1"
         eType="#//RestMethod" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="RestMethod">
+  <eClassifiers xsi:type="ecore:EClass" name="RestMethod" eSuperTypes="#//Secured">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A resource method: an HTTP method and an optional sub path that are bound to one EOperation."/>
     </eAnnotations>
@@ -104,6 +116,41 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Secured" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Access control of an application, a resource or a method. The most specific element that says something decides: a method before its resource, a resource before its application. An element says something when it has roles or an access other than INHERIT. When nothing is said at all, the method is public."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="access" lowerBound="1" eType="#//Access"
+        defaultValueLiteral="INHERIT"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rolesAllowed" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The caller must be authenticated and hold at least one of these roles. Roles can only be combined with the access INHERIT or AUTHENTICATED."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Access">
+    <eLiterals name="INHERIT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Nothing is said here, the containing element decides."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="PUBLIC" value="1">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="No check at all."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="AUTHENTICATED" value="2">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Any authenticated caller, whatever the roles."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="DENY" value="3">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Nobody. On an application this makes it closed by default."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="HttpMethod">
     <eLiterals name="GET"/>
     <eLiterals name="POST" value="1"/>
@@ -119,5 +166,15 @@
     <eLiterals name="HEADER" value="2"/>
     <eLiterals name="COOKIE" value="3"/>
     <eLiterals name="BODY" value="4"/>
+    <eLiterals name="PRINCIPAL" value="5">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The authenticated caller: its name for an EString parameter, the principal object otherwise."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="CONTEXT" value="6">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="A Jakarta RS request object, selected by the instance class name of the parameter's data type: SecurityContext, UriInfo, HttpHeaders, Request or ContainerRequestContext. This ties the operation to REST; prefer PRINCIPAL and ordinary parameters where they suffice."/>
+      </eAnnotations>
+    </eLiterals>
   </eClassifiers>
 </ecore:EPackage>

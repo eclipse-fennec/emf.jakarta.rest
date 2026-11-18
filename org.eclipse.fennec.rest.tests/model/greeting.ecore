@@ -30,6 +30,12 @@
       </eAnnotations>
       <eParameters name="greeting" eType="#//Greeting"/>
     </eOperations>
+    <eOperations name="whoami" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
+        <details key="body" value="whoami"/>
+      </eAnnotations>
+      <eParameters name="user" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Greeting">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

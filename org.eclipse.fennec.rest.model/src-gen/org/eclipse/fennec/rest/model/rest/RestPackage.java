@@ -43,7 +43,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-@EPackage(uri = RestPackage.eNS_URI, fingerprint = "fp1:0e7d4c25b138f76c960a68f7682ee819b34f22b7c3deea77915e12b08dab5f70", genModel = "/model/rest.genmodel", genModelSourceLocations = {"model/rest.genmodel","org.eclipse.fennec.rest.model/model/rest.genmodel"}, ecore = "/model/rest.ecore", ecoreSourceLocations = "/model/rest.ecore")
+@EPackage(uri = RestPackage.eNS_URI, fingerprint = "fp1:05f4ce5f7db843c088eb50f1fdf2540cf4c65fccda8a4f63be5f1b77a8a1cf81", genModel = "/model/rest.genmodel", genModelSourceLocations = {"model/rest.genmodel","org.eclipse.fennec.rest.model/model/rest.genmodel"}, ecore = "/model/rest.ecore", ecoreSourceLocations = "/model/rest.ecore")
 public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.
@@ -78,6 +78,52 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	RestPackage eINSTANCE = org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl.init();
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.impl.SecuredImpl <em>Secured</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.rest.model.rest.impl.SecuredImpl
+	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getSecured()
+	 * @generated
+	 */
+	int SECURED = 0;
+
+	/**
+	 * The feature id for the '<em><b>Access</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURED__ACCESS = 0;
+
+	/**
+	 * The feature id for the '<em><b>Roles Allowed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURED__ROLES_ALLOWED = 1;
+
+	/**
+	 * The number of structural features of the '<em>Secured</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURED_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Secured</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURED_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl <em>Application</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -85,7 +131,25 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getRestApplication()
 	 * @generated
 	 */
-	int REST_APPLICATION = 0;
+	int REST_APPLICATION = 1;
+
+	/**
+	 * The feature id for the '<em><b>Access</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_APPLICATION__ACCESS = SECURED__ACCESS;
+
+	/**
+	 * The feature id for the '<em><b>Roles Allowed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_APPLICATION__ROLES_ALLOWED = SECURED__ROLES_ALLOWED;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -94,7 +158,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_APPLICATION__NAME = 0;
+	int REST_APPLICATION__NAME = SECURED_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Base Path</b></em>' attribute.
@@ -103,7 +167,25 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_APPLICATION__BASE_PATH = 1;
+	int REST_APPLICATION__BASE_PATH = SECURED_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Extension Select</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_APPLICATION__EXTENSION_SELECT = SECURED_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_APPLICATION__PROPERTIES = SECURED_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Resources</b></em>' containment reference list.
@@ -112,7 +194,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_APPLICATION__RESOURCES = 2;
+	int REST_APPLICATION__RESOURCES = SECURED_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -121,7 +203,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_APPLICATION_FEATURE_COUNT = 3;
+	int REST_APPLICATION_FEATURE_COUNT = SECURED_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Application</em>' class.
@@ -130,7 +212,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_APPLICATION_OPERATION_COUNT = 0;
+	int REST_APPLICATION_OPERATION_COUNT = SECURED_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.impl.RestResourceImpl <em>Resource</em>}' class.
@@ -140,7 +222,25 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getRestResource()
 	 * @generated
 	 */
-	int REST_RESOURCE = 1;
+	int REST_RESOURCE = 2;
+
+	/**
+	 * The feature id for the '<em><b>Access</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_RESOURCE__ACCESS = SECURED__ACCESS;
+
+	/**
+	 * The feature id for the '<em><b>Roles Allowed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_RESOURCE__ROLES_ALLOWED = SECURED__ROLES_ALLOWED;
 
 	/**
 	 * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -149,7 +249,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE__PATH = 0;
+	int REST_RESOURCE__PATH = SECURED_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
@@ -158,7 +258,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE__TARGET = 1;
+	int REST_RESOURCE__TARGET = SECURED_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Consumes</b></em>' attribute list.
@@ -167,7 +267,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE__CONSUMES = 2;
+	int REST_RESOURCE__CONSUMES = SECURED_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Produces</b></em>' attribute list.
@@ -176,7 +276,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE__PRODUCES = 3;
+	int REST_RESOURCE__PRODUCES = SECURED_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Methods</b></em>' containment reference list.
@@ -185,7 +285,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE__METHODS = 4;
+	int REST_RESOURCE__METHODS = SECURED_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Resource</em>' class.
@@ -194,7 +294,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE_FEATURE_COUNT = 5;
+	int REST_RESOURCE_FEATURE_COUNT = SECURED_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Resource</em>' class.
@@ -203,7 +303,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_RESOURCE_OPERATION_COUNT = 0;
+	int REST_RESOURCE_OPERATION_COUNT = SECURED_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.impl.RestMethodImpl <em>Method</em>}' class.
@@ -213,7 +313,25 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getRestMethod()
 	 * @generated
 	 */
-	int REST_METHOD = 2;
+	int REST_METHOD = 3;
+
+	/**
+	 * The feature id for the '<em><b>Access</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_METHOD__ACCESS = SECURED__ACCESS;
+
+	/**
+	 * The feature id for the '<em><b>Roles Allowed</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REST_METHOD__ROLES_ALLOWED = SECURED__ROLES_ALLOWED;
 
 	/**
 	 * The feature id for the '<em><b>Http Method</b></em>' attribute.
@@ -222,7 +340,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__HTTP_METHOD = 0;
+	int REST_METHOD__HTTP_METHOD = SECURED_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -231,7 +349,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__PATH = 1;
+	int REST_METHOD__PATH = SECURED_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Operation</b></em>' reference.
@@ -240,7 +358,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__OPERATION = 2;
+	int REST_METHOD__OPERATION = SECURED_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Consumes</b></em>' attribute list.
@@ -249,7 +367,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__CONSUMES = 3;
+	int REST_METHOD__CONSUMES = SECURED_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Produces</b></em>' attribute list.
@@ -258,7 +376,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__PRODUCES = 4;
+	int REST_METHOD__PRODUCES = SECURED_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Success Status</b></em>' attribute.
@@ -267,7 +385,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__SUCCESS_STATUS = 5;
+	int REST_METHOD__SUCCESS_STATUS = SECURED_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
@@ -276,7 +394,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD__PARAMETERS = 6;
+	int REST_METHOD__PARAMETERS = SECURED_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of structural features of the '<em>Method</em>' class.
@@ -285,7 +403,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD_FEATURE_COUNT = 7;
+	int REST_METHOD_FEATURE_COUNT = SECURED_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of operations of the '<em>Method</em>' class.
@@ -294,7 +412,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REST_METHOD_OPERATION_COUNT = 0;
+	int REST_METHOD_OPERATION_COUNT = SECURED_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.impl.ParameterBindingImpl <em>Parameter Binding</em>}' class.
@@ -304,7 +422,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getParameterBinding()
 	 * @generated
 	 */
-	int PARAMETER_BINDING = 3;
+	int PARAMETER_BINDING = 4;
 
 	/**
 	 * The feature id for the '<em><b>Parameter</b></em>' reference.
@@ -368,7 +486,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getHttpMethod()
 	 * @generated
 	 */
-	int HTTP_METHOD = 4;
+	int HTTP_METHOD = 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.ParameterSource <em>Parameter Source</em>}' enum.
@@ -378,8 +496,50 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getParameterSource()
 	 * @generated
 	 */
-	int PARAMETER_SOURCE = 5;
+	int PARAMETER_SOURCE = 6;
 
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.rest.model.rest.Access <em>Access</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.rest.model.rest.Access
+	 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getAccess()
+	 * @generated
+	 */
+	int ACCESS = 7;
+
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.rest.model.rest.Secured <em>Secured</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Secured</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.Secured
+	 * @generated
+	 */
+	EClass getSecured();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.rest.model.rest.Secured#getAccess <em>Access</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Access</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.Secured#getAccess()
+	 * @see #getSecured()
+	 * @generated
+	 */
+	EAttribute getSecured_Access();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.fennec.rest.model.rest.Secured#getRolesAllowed <em>Roles Allowed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Roles Allowed</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.Secured#getRolesAllowed()
+	 * @see #getSecured()
+	 * @generated
+	 */
+	EAttribute getSecured_RolesAllowed();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.rest.model.rest.RestApplication <em>Application</em>}'.
@@ -412,6 +572,28 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getRestApplication_BasePath();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.fennec.rest.model.rest.RestApplication#getExtensionSelect <em>Extension Select</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Extension Select</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.RestApplication#getExtensionSelect()
+	 * @see #getRestApplication()
+	 * @generated
+	 */
+	EAttribute getRestApplication_ExtensionSelect();
+
+	/**
+	 * Returns the meta object for the map '{@link org.eclipse.fennec.rest.model.rest.RestApplication#getProperties <em>Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Properties</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.RestApplication#getProperties()
+	 * @see #getRestApplication()
+	 * @generated
+	 */
+	EReference getRestApplication_Properties();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.rest.model.rest.RestApplication#getResources <em>Resources</em>}'.
@@ -651,6 +833,16 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getParameterSource();
 
 	/**
+	 * Returns the meta object for enum '{@link org.eclipse.fennec.rest.model.rest.Access <em>Access</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Access</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.Access
+	 * @generated
+	 */
+	EEnum getAccess();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -673,6 +865,32 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	interface Literals {
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.rest.model.rest.impl.SecuredImpl <em>Secured</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.rest.model.rest.impl.SecuredImpl
+		 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getSecured()
+		 * @generated
+		 */
+		EClass SECURED = eINSTANCE.getSecured();
+
+		/**
+		 * The meta object literal for the '<em><b>Access</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURED__ACCESS = eINSTANCE.getSecured_Access();
+
+		/**
+		 * The meta object literal for the '<em><b>Roles Allowed</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURED__ROLES_ALLOWED = eINSTANCE.getSecured_RolesAllowed();
+
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl <em>Application</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -698,6 +916,22 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute REST_APPLICATION__BASE_PATH = eINSTANCE.getRestApplication_BasePath();
+
+		/**
+		 * The meta object literal for the '<em><b>Extension Select</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REST_APPLICATION__EXTENSION_SELECT = eINSTANCE.getRestApplication_ExtensionSelect();
+
+		/**
+		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference REST_APPLICATION__PROPERTIES = eINSTANCE.getRestApplication_Properties();
 
 		/**
 		 * The meta object literal for the '<em><b>Resources</b></em>' containment reference list feature.
@@ -884,6 +1118,16 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EEnum PARAMETER_SOURCE = eINSTANCE.getParameterSource();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.rest.model.rest.Access <em>Access</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.rest.model.rest.Access
+		 * @see org.eclipse.fennec.rest.model.rest.impl.RestPackageImpl#getAccess()
+		 * @generated
+		 */
+		EEnum ACCESS = eINSTANCE.getAccess();
 
 	}
 

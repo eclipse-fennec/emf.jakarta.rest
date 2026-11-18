@@ -53,7 +53,8 @@ import org.osgi.test.common.annotation.InjectService;
 class ModelledGreetingIT {
 
 	/** Matches {@code configs/config.json} plus the base path of {@code greeting.rest}. */
-	private static final String BASE_URL = "http://localhost:8198/rest/greeting/greetings";
+	private static final String APPLICATION_URL = "http://localhost:8198/rest/greeting";
+	private static final String BASE_URL = APPLICATION_URL + "/greetings";
 
 	private static final HttpClient CLIENT = HttpClient.newHttpClient();
 	private static final List<Configuration> CONFIGURATIONS = new ArrayList<>();
@@ -123,6 +124,32 @@ class ModelledGreetingIT {
 	@Test
 	void unmodelledPathIsNotFound() throws Exception {
 		assertThat(get("/Ada/unknown", "text/plain").statusCode()).isEqualTo(404);
+	}
+
+	@Test
+	void securedResourceRefusesAnAnonymousCaller() throws Exception {
+		assertThat(whoami().statusCode()).isEqualTo(401);
+	}
+
+	@Test
+	void securedResourceRefusesACallerWithoutTheRole() throws Exception {
+		assertThat(whoami("X-Test-User", "eve", "X-Test-Roles", "guest").statusCode()).isEqualTo(403);
+	}
+
+	@Test
+	void principalOfTheAuthenticationFilterReachesTheDelegate() throws Exception {
+		HttpResponse<String> response = whoami("X-Test-User", "ada", "X-Test-Roles", "guest,user");
+
+		assertThat(response.statusCode()).isEqualTo(200);
+		assertThat(response.body()).isEqualTo("I am ada");
+	}
+
+	private static HttpResponse<String> whoami(String... headers) throws Exception {
+		HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(APPLICATION_URL + "/account/whoami")).GET();
+		for (int i = 0; i + 1 < headers.length; i += 2) {
+			request.header(headers[i], headers[i + 1]);
+		}
+		return CLIENT.send(request.build(), BodyHandlers.ofString());
 	}
 
 	private static HttpResponse<String> get(String path, String accept) throws Exception {

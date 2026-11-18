@@ -52,12 +52,44 @@ transport details.
 | Parameter literal cannot be converted | 400 |
 | No invocation delegate registered for a dynamic operation | 503 |
 
+## Request context
+
+A `ParameterBinding` can take its value from the request context instead of the request data:
+
+| Source | Value |
+|---|---|
+| `PRINCIPAL` | The authenticated caller: its name for an `EString` parameter, the principal object otherwise |
+| `CONTEXT` | A Jakarta RS object, selected by the instance class name of the parameter's data type: `SecurityContext`, `UriInfo`, `HttpHeaders`, `Request`, `ContainerRequestContext` |
+
+A mandatory parameter (`lowerBound >= 1`) that is missing answers 400, a missing mandatory
+principal 401.
+
+## Access control
+
+`RestApplication`, `RestResource` and `RestMethod` have `rolesAllowed` and `access`
+(`INHERIT`, `PUBLIC`, `AUTHENTICATED`, `DENY`). The most specific element that says something
+decides: method, then resource, then application. With no rule at all a method is public; an
+application with `access="DENY"` is closed by default.
+
+| Situation | Response |
+|---|---|
+| Caller required, none present | 401 |
+| Caller lacks all allowed roles, or access is `DENY` | 403 |
+
+The runtime only authorizes. Authentication stays a whiteboard extension (e.g. a JWT filter)
+that sets the `SecurityContext`. It is attached through the model: `properties` become service
+properties of the application, `extensionSelect` the extensions it requires. Access is checked
+before anything else of the request is looked at.
+
+Annotation-driven security features (`@RolesAllowed` scanners) see nothing on a modelled
+resource, because there is no resource class. A deny-by-default feature of that kind would
+close every modelled method and must not select a modelled application.
+
 ## Not covered yet
 
-- Request context for the delegate (`UriInfo`, `SecurityContext`, ...): a delegate only sees the
-  target object and the arguments.
+- Response control from the delegate (headers, `Location`), streams and binary bodies.
+- The request-scoped `ResourceSet` of the codec cannot be bound as a parameter yet.
 - The target EClass is instantiated per request and is stateless.
-- Mandatory parameters are not enforced; an absent parameter without default arrives as `null`.
 - Many-valued body parameters are rejected when the model is interpreted.
 - EMF caches the delegate on the `EOperation`. A delegate factory that disappears is noticed
   (503), one that is replaced without a gap is not.

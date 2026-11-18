@@ -40,7 +40,7 @@ public class RestEPackageConfigurator implements EPackageConfigurator {
 	 * service property.
 	 * @generated
 	 */
-	public static final String FINGERPRINT = "fp1:0e7d4c25b138f76c960a68f7682ee819b34f22b7c3deea77915e12b08dab5f70";
+	public static final String FINGERPRINT = "fp1:05f4ce5f7db843c088eb50f1fdf2540cf4c65fccda8a4f63be5f1b77a8a1cf81";
 
 	private RestPackage ePackage;
 

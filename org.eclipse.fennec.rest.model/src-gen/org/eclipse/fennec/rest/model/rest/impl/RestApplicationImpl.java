@@ -18,14 +18,19 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.fennec.rest.model.rest.RestApplication;
@@ -42,12 +47,14 @@ import org.eclipse.fennec.rest.model.rest.RestResource;
  * <ul>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl#getBasePath <em>Base Path</em>}</li>
+ *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl#getExtensionSelect <em>Extension Select</em>}</li>
+ *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.RestApplicationImpl#getResources <em>Resources</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class RestApplicationImpl extends MinimalEObjectImpl.Container implements RestApplication {
+public class RestApplicationImpl extends SecuredImpl implements RestApplication {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -87,6 +94,26 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected String basePath = BASE_PATH_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getExtensionSelect() <em>Extension Select</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getExtensionSelect()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> extensionSelect;
+
+	/**
+	 * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> properties;
 
 	/**
 	 * The cached value of the '{@link #getResources() <em>Resources</em>}' containment reference list.
@@ -169,6 +196,32 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
+	public EList<String> getExtensionSelect() {
+		if (extensionSelect == null) {
+			extensionSelect = new EDataTypeUniqueEList<String>(String.class, this, RestPackage.REST_APPLICATION__EXTENSION_SELECT);
+		}
+		return extensionSelect;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EMap<String, String> getProperties() {
+		if (properties == null) {
+			properties = new EcoreEMap<String,String>(EcorePackage.Literals.ESTRING_TO_STRING_MAP_ENTRY, EStringToStringMapEntryImpl.class, this, RestPackage.REST_APPLICATION__PROPERTIES);
+		}
+		return properties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EList<RestResource> getResources() {
 		if (resources == null) {
 			resources = new EObjectContainmentEList<RestResource>(RestResource.class, this, RestPackage.REST_APPLICATION__RESOURCES);
@@ -184,6 +237,8 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case RestPackage.REST_APPLICATION__PROPERTIES:
+				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
 			case RestPackage.REST_APPLICATION__RESOURCES:
 				return ((InternalEList<?>)getResources()).basicRemove(otherEnd, msgs);
 		}
@@ -202,6 +257,11 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 				return getName();
 			case RestPackage.REST_APPLICATION__BASE_PATH:
 				return getBasePath();
+			case RestPackage.REST_APPLICATION__EXTENSION_SELECT:
+				return getExtensionSelect();
+			case RestPackage.REST_APPLICATION__PROPERTIES:
+				if (coreType) return getProperties();
+				else return getProperties().map();
 			case RestPackage.REST_APPLICATION__RESOURCES:
 				return getResources();
 		}
@@ -222,6 +282,13 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 				return;
 			case RestPackage.REST_APPLICATION__BASE_PATH:
 				setBasePath((String)newValue);
+				return;
+			case RestPackage.REST_APPLICATION__EXTENSION_SELECT:
+				getExtensionSelect().clear();
+				getExtensionSelect().addAll((Collection<? extends String>)newValue);
+				return;
+			case RestPackage.REST_APPLICATION__PROPERTIES:
+				((EStructuralFeature.Setting)getProperties()).set(newValue);
 				return;
 			case RestPackage.REST_APPLICATION__RESOURCES:
 				getResources().clear();
@@ -245,6 +312,12 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 			case RestPackage.REST_APPLICATION__BASE_PATH:
 				setBasePath(BASE_PATH_EDEFAULT);
 				return;
+			case RestPackage.REST_APPLICATION__EXTENSION_SELECT:
+				getExtensionSelect().clear();
+				return;
+			case RestPackage.REST_APPLICATION__PROPERTIES:
+				getProperties().clear();
+				return;
 			case RestPackage.REST_APPLICATION__RESOURCES:
 				getResources().clear();
 				return;
@@ -264,6 +337,10 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RestPackage.REST_APPLICATION__BASE_PATH:
 				return BASE_PATH_EDEFAULT == null ? basePath != null : !BASE_PATH_EDEFAULT.equals(basePath);
+			case RestPackage.REST_APPLICATION__EXTENSION_SELECT:
+				return extensionSelect != null && !extensionSelect.isEmpty();
+			case RestPackage.REST_APPLICATION__PROPERTIES:
+				return properties != null && !properties.isEmpty();
 			case RestPackage.REST_APPLICATION__RESOURCES:
 				return resources != null && !resources.isEmpty();
 		}
@@ -284,6 +361,8 @@ public class RestApplicationImpl extends MinimalEObjectImpl.Container implements
 		result.append(name);
 		result.append(", basePath: ");
 		result.append(basePath);
+		result.append(", extensionSelect: ");
+		result.append(extensionSelect);
 		result.append(')');
 		return result.toString();
 	}

@@ -13,17 +13,20 @@
 package org.eclipse.fennec.rest.runtime;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.fennec.rest.model.rest.Access;
 import org.eclipse.fennec.rest.model.rest.HttpMethod;
 import org.eclipse.fennec.rest.model.rest.ParameterBinding;
 import org.eclipse.fennec.rest.model.rest.ParameterSource;
@@ -33,6 +36,7 @@ import org.eclipse.fennec.rest.model.rest.RestApplication;
 import org.eclipse.fennec.rest.model.rest.RestFactory;
 
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.UriInfo;
 
 /**
  * Test fixture: a purely dynamic domain model ({@code GreetingService}) whose operations are
@@ -56,6 +60,8 @@ final class GreetingModel {
 	final EOperation foreign;
 	final RestApplication application;
 	final RestResource resource;
+	final RestResource secured;
+	final EOperation unknownContext;
 
 	GreetingModel() {
 		EcoreFactory ecore = EcoreFactory.eINSTANCE;
@@ -125,6 +131,57 @@ final class GreetingModel {
 		method(HttpMethod.GET, "missing", missing);
 		method(HttpMethod.GET, "broken", broken);
 		method(HttpMethod.GET, "orphan", orphan);
+
+		// --- a second resource for request context and access control: every caller needs
+		// the role "user", unless a method says something else
+		EDataType principalType = dataType("Principal", "java.security.Principal");
+		EDataType uriInfoType = dataType("UriInfo", "jakarta.ws.rs.core.UriInfo");
+		EDataType unknownType = dataType("Unknown", "java.lang.Thread");
+
+		EOperation whoami = operation(service, "whoami", string, DELEGATE_URI);
+		parameter(whoami, "user", string, 1).setLowerBound(1);
+		EOperation whoamiObject = operation(service, "whoamiObject", string, DELEGATE_URI);
+		parameter(whoamiObject, "principal", principalType, 1);
+		EOperation where = operation(service, "where", string, DELEGATE_URI);
+		parameter(where, "uri", uriInfoType, 1);
+		EOperation ok = operation(service, "ok", string, DELEGATE_URI);
+		EOperation required = operation(service, "required", string, DELEGATE_URI);
+		parameter(required, "name", string, 1).setLowerBound(1);
+		unknownContext = operation(service, "unknownContext", string, DELEGATE_URI);
+		parameter(unknownContext, "thread", unknownType, 1);
+
+		secured = rest.createRestResource();
+		secured.setPath("secured");
+		secured.setTarget(service);
+		secured.getProduces().add("text/plain");
+		secured.getRolesAllowed().add("user");
+		application.getResources().add(secured);
+
+		bind(method(secured, HttpMethod.GET, "whoami", whoami), whoami.getEParameters().get(0),
+				ParameterSource.PRINCIPAL, null, null);
+		bind(method(secured, HttpMethod.GET, "principal", whoamiObject), whoamiObject.getEParameters().get(0),
+				ParameterSource.PRINCIPAL, null, null);
+		method(secured, HttpMethod.GET, "admin", ok).getRolesAllowed().add("admin");
+		method(secured, HttpMethod.GET, "any", ok).setAccess(Access.AUTHENTICATED);
+		method(secured, HttpMethod.GET, "open", ok).setAccess(Access.PUBLIC);
+		method(secured, HttpMethod.GET, "closed", ok).setAccess(Access.DENY);
+		RestMethod openWhoami = method(secured, HttpMethod.GET, "open/whoami", whoami);
+		openWhoami.setAccess(Access.PUBLIC);
+		bind(openWhoami, whoami.getEParameters().get(0), ParameterSource.PRINCIPAL, null, null);
+		RestMethod whereMethod = method(secured, HttpMethod.GET, "open/where", where);
+		whereMethod.setAccess(Access.PUBLIC);
+		bind(whereMethod, where.getEParameters().get(0), ParameterSource.CONTEXT, null, null);
+		RestMethod requiredMethod = method(secured, HttpMethod.GET, "open/required", required);
+		requiredMethod.setAccess(Access.PUBLIC);
+		bind(requiredMethod, required.getEParameters().get(0), ParameterSource.QUERY, null, null);
+	}
+
+	private EDataType dataType(String name, String instanceClassName) {
+		EDataType dataType = EcoreFactory.eINSTANCE.createEDataType();
+		dataType.setName(name);
+		dataType.setInstanceClassName(instanceClassName);
+		domainPackage.getEClassifiers().add(dataType);
+		return dataType;
 	}
 
 	/**
@@ -143,6 +200,16 @@ final class GreetingModel {
 				return null;
 			case "tags":
 				return String.join("|", ((List<?>) arguments.get(0)).stream().map(String::valueOf).toList());
+			case "whoami":
+				return "I am " + arguments.get(0);
+			case "whoamiObject":
+				return "principal " + ((Principal) arguments.get(0)).getName();
+			case "where":
+				return "at " + ((UriInfo) arguments.get(0)).getPath();
+			case "ok":
+				return "ok";
+			case "required":
+				return "got " + arguments.get(0);
 			case "missing":
 				throw new InvocationTargetException(new NotFoundException("no such greeting"));
 			case "broken":
@@ -154,6 +221,10 @@ final class GreetingModel {
 	}
 
 	RestMethod method(HttpMethod httpMethod, String path, EOperation operation) {
+		return method(resource, httpMethod, path, operation);
+	}
+
+	RestMethod method(RestResource resource, HttpMethod httpMethod, String path, EOperation operation) {
 		RestMethod method = RestFactory.eINSTANCE.createRestMethod();
 		method.setHttpMethod(httpMethod);
 		method.setPath(path);
@@ -184,11 +255,12 @@ final class GreetingModel {
 		return operation;
 	}
 
-	private static void parameter(EOperation operation, String name, EClassifier type, int upperBound) {
+	private static EParameter parameter(EOperation operation, String name, EClassifier type, int upperBound) {
 		EParameter parameter = EcoreFactory.eINSTANCE.createEParameter();
 		parameter.setName(name);
 		parameter.setEType(type);
 		parameter.setUpperBound(upperBound);
 		operation.getEParameters().add(parameter);
+		return parameter;
 	}
 }
