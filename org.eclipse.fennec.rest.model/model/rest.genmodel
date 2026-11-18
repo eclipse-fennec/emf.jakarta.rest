@@ -24,6 +24,8 @@
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/COOKIE"/>
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/BODY"/>
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/PRINCIPAL"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/MATRIX"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/FORM"/>
       <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/CONTEXT"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="rest.ecore#//Access">

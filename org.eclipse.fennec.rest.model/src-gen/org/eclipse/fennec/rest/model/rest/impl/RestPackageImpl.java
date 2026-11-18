@@ -615,6 +615,8 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.COOKIE);
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.BODY);
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.PRINCIPAL);
+		addEEnumLiteral(parameterSourceEEnum, ParameterSource.MATRIX);
+		addEEnumLiteral(parameterSourceEEnum, ParameterSource.FORM);
 		addEEnumLiteral(parameterSourceEEnum, ParameterSource.CONTEXT);
 
 		initEEnum(accessEEnum, Access.class, "Access");

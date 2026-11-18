@@ -91,6 +91,7 @@ class ResourceInterpreter {
 		List<EParameter> parameters = operation.getEParameters();
 		ParameterBinding[] bindings = new ParameterBinding[parameters.size()];
 		boolean bodyBound = false;
+		boolean formBound = false;
 		for (ParameterBinding binding : method.getParameters()) {
 			int index = parameters.indexOf(binding.getParameter());
 			if (index < 0) {
@@ -111,6 +112,7 @@ class ResourceInterpreter {
 				}
 				bodyBound = true;
 			}
+			formBound |= binding.getSource() == ParameterSource.FORM;
 			if (binding.getSource() == ParameterSource.CONTEXT
 					&& !RequestContexts.supports(parameters.get(index).getEType().getInstanceClassName())) {
 				throw new IllegalArgumentException("Method '" + where + "' binds parameter '"
@@ -119,6 +121,10 @@ class ResourceInterpreter {
 						+ RequestContexts.supported());
 			}
 			bindings[index] = binding;
+		}
+		if (bodyBound && formBound) {
+			throw new IllegalArgumentException("Method '" + where
+					+ "' binds parameters to form fields and to the body; the body can only be read as one of them");
 		}
 
 		ResourceMethod.Builder builder = owner.addMethod(method.getHttpMethod().getName());

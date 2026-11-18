@@ -26,6 +26,7 @@ import org.glassfish.jersey.server.ApplicationHandler;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ContainerResponse;
 
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.SecurityContext;
 
 /**
@@ -43,7 +44,7 @@ final class Harness {
 		this.handler = new ApplicationHandler(new ModelledApplication(model));
 	}
 
-	record Result(int status, String body) {
+	record Result(int status, String body, MultivaluedMap<String, String> headers) {
 	}
 
 	/** A caller with a name and roles; {@code null} stands for an unauthenticated request. */
@@ -94,6 +95,6 @@ final class Harness {
 		}
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ContainerResponse response = handler.apply(request, out).get(10, TimeUnit.SECONDS);
-		return new Result(response.getStatus(), out.toString(StandardCharsets.UTF_8));
+		return new Result(response.getStatus(), out.toString(StandardCharsets.UTF_8), response.getStringHeaders());
 	}
 }

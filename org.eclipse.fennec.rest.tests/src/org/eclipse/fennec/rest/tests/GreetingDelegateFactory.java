@@ -12,6 +12,7 @@
  */
 package org.eclipse.fennec.rest.tests;
 
+import java.net.URI;
 import java.util.Collections;
 
 import org.eclipse.emf.common.util.EList;
@@ -24,13 +25,16 @@ import org.eclipse.fennec.emf.osgi.annotation.ConfiguratorType;
 import org.eclipse.fennec.emf.osgi.annotation.provide.EMFConfigurator;
 import org.osgi.service.component.annotations.Component;
 
+import jakarta.ws.rs.core.Response;
+
 /**
  * The behaviour of the {@code GreetingService} operations of {@code greeting.ecore}. It is an
  * ordinary EMF invocation delegate factory, published as an OSGi service; Fennec EMF OSGi puts
  * it into the EMF delegate registry under the URI the model declares.
  * <p>
- * It knows nothing about REST: it receives the target object and the arguments of
- * {@code eInvoke} and returns the result.
+ * It receives the target object and the arguments of {@code eInvoke} and returns the result.
+ * Only {@code register} knows about REST: it returns a Jakarta RS {@code Response}, the
+ * fallback for everything a model cannot declare.
  * </p>
  */
 @Component(service = EOperation.Internal.InvocationDelegate.Factory.class)
@@ -52,6 +56,10 @@ public class GreetingDelegateFactory implements EOperation.Internal.InvocationDe
 					"Hello, " + arguments.get(0) + "!");
 		case "whoami":
 			return (target, arguments) -> "I am " + arguments.get(0);
+		case "register":
+			// beyond what a model can declare: the delegate builds the response itself
+			return (target, arguments) -> Response.created(URI.create("greetings/" + arguments.get(0)))
+					.header("X-Registered", arguments.get(0)).build();
 		case "reply":
 			return GreetingDelegateFactory::reply;
 		default:

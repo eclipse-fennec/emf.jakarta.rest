@@ -41,6 +41,12 @@
         <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/reply/greeting"/>
       </parameters>
     </methods>
+    <methods httpMethod="PUT" path="{name}">
+      <operation href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/register"/>
+      <parameters source="PATH">
+        <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/register/name"/>
+      </parameters>
+    </methods>
   </resources>
   <resources path="account">
     <rolesAllowed>user</rolesAllowed>

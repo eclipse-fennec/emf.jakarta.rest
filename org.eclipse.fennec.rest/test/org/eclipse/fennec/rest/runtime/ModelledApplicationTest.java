@@ -18,6 +18,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.fennec.rest.model.rest.HttpMethod;
+import org.eclipse.fennec.rest.model.rest.ParameterBinding;
+import org.eclipse.fennec.rest.model.rest.ParameterSource;
+import org.eclipse.fennec.rest.model.rest.RestFactory;
+import org.eclipse.fennec.rest.model.rest.RestMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -124,6 +128,48 @@ class ModelledApplicationTest {
 		} finally {
 			registry.remove(GreetingModel.NO_DELEGATE_URI);
 		}
+	}
+
+	@Test
+	void responseOfTheDelegateIsPassedThroughUnchanged() throws Exception {
+		Harness.Result result = call("POST", "greetings/created", null);
+
+		// the modelled success status (200) does not apply: the delegate has decided
+		assertThat(result.status()).isEqualTo(201);
+		assertThat(result.headers().getFirst("Location")).isEqualTo("http://localhost/greetings/42");
+		assertThat(result.headers().getFirst("X-Extra")).isEqualTo("1");
+		assertThat(result.body()).isEqualTo("made");
+	}
+
+	@Test
+	void matrixParameterIsPassedToTheOperation() throws Exception {
+		assertThat(call("GET", "greetings/matrix;color=red", null).body()).isEqualTo("color red");
+		assertThat(call("GET", "greetings/matrix", null).body()).isEqualTo("color none");
+	}
+
+	@Test
+	void formFieldsArePassedToTheOperation() throws Exception {
+		Harness.Result result = call("POST", "greetings/form", "name=Ada&name=Bob&age=36", "Content-Type",
+				"application/x-www-form-urlencoded");
+
+		assertThat(result.status()).isEqualTo(200);
+		assertThat(result.body()).isEqualTo("Ada|Bob aged 36");
+	}
+
+	@Test
+	void formAndBodyOnOneMethodAreRejectedWhenTheApplicationIsBuilt() {
+		RestMethod method = model.method(HttpMethod.PUT, "form", model.form);
+		ParameterBinding field = RestFactory.eINSTANCE.createParameterBinding();
+		field.setParameter(model.form.getEParameters().get(0));
+		field.setSource(ParameterSource.FORM);
+		ParameterBinding body = RestFactory.eINSTANCE.createParameterBinding();
+		body.setParameter(model.form.getEParameters().get(1));
+		body.setSource(ParameterSource.BODY);
+		method.getParameters().add(field);
+		method.getParameters().add(body);
+
+		assertThatThrownBy(() -> new Harness(model.application)).hasStackTraceContaining("PUT greetings/form")
+				.hasStackTraceContaining("form");
 	}
 
 	@Test

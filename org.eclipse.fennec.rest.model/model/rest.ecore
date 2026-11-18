@@ -171,6 +171,16 @@
         <details key="documentation" value="The authenticated caller: its name for an EString parameter, the principal object otherwise."/>
       </eAnnotations>
     </eLiterals>
+    <eLiterals name="MATRIX" value="7">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="A matrix parameter of the request path."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="FORM" value="8">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="A field of a form-encoded request body. Cannot be combined with BODY."/>
+      </eAnnotations>
+    </eLiterals>
     <eLiterals name="CONTEXT" value="6">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="A Jakarta RS request object, selected by the instance class name of the parameter's data type: SecurityContext, UriInfo, HttpHeaders, Request or ContainerRequestContext. This ties the operation to REST; prefer PRINCIPAL and ordinary parameters where they suffice."/>

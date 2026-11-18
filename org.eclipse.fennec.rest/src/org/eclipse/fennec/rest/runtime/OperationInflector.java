@@ -39,13 +39,16 @@ import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.PathSegment;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * Handles the requests of one modelled resource method: resolves the arguments from the
  * request, invokes the bound {@link EOperation} reflectively on a fresh instance of the target
- * {@link EClass} and turns the result into a {@link Response}.
+ * {@link EClass} and turns the result into a {@link Response}. A result that already is a
+ * {@link Response} is passed through unchanged.
  * <p>
  * The behaviour of the operation is not in here. {@code eInvoke} ends in the EMF invocation
  * delegate of the operation, for a dynamic model as well as for a generated one.
@@ -56,6 +59,8 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 	private static final Map<Class<?>, Class<?>> WRAPPERS = Map.of(boolean.class, Boolean.class, byte.class,
 			Byte.class, char.class, Character.class, short.class, Short.class, int.class, Integer.class, long.class,
 			Long.class, float.class, Float.class, double.class, Double.class);
+
+	private static final String FORM_PROPERTY = OperationInflector.class.getName() + ".form";
 
 	private final EClass target;
 	private final EOperation operation;
@@ -99,6 +104,10 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 				throw webApplicationException;
 			}
 			throw new InternalServerErrorException("Operation '" + operation.getName() + "' failed", e.getCause());
+		}
+		if (result instanceof Response response) {
+			// the delegate has built the response itself, exactly as a resource method may
+			return response;
 		}
 		if (result == null) {
 			return Response.status(successStatus == 0 ? Response.Status.NO_CONTENT.getStatusCode() : successStatus)
@@ -162,6 +171,18 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		case HEADER:
 			literals = request.getHeaders().get(name);
 			break;
+		case MATRIX:
+			literals = null;
+			for (PathSegment segment : request.getUriInfo().getPathSegments()) {
+				List<String> values = segment.getMatrixParameters().get(name);
+				if (values != null) {
+					literals = values;
+				}
+			}
+			break;
+		case FORM:
+			literals = form(request).asMap().get(name);
+			break;
 		case COOKIE:
 			Cookie cookie = request.getCookies().get(name);
 			literals = cookie == null ? null : List.of(cookie.getValue());
@@ -182,6 +203,16 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 			return values;
 		}
 		return literals == null || literals.isEmpty() ? null : convert(parameter, name, literals.get(0));
+	}
+
+	/** The form of the request. The body can be read only once, so it is kept for the other fields. */
+	private static Form form(ContainerRequestContext request) {
+		Object form = request.getProperty(FORM_PROPERTY);
+		if (form == null) {
+			form = request.hasEntity() ? ((ContainerRequest) request).readEntity(Form.class) : new Form();
+			request.setProperty(FORM_PROPERTY, form);
+		}
+		return (Form) form;
 	}
 
 	private Object readBody(EParameter parameter, ParameterBinding binding, ContainerRequestContext request) {

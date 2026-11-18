@@ -127,6 +127,17 @@ class ModelledGreetingIT {
 	}
 
 	@Test
+	void responseBuiltByTheDelegateIsSentAsIs() throws Exception {
+		HttpResponse<String> response = CLIENT.send(
+				HttpRequest.newBuilder(URI.create(BASE_URL + "/Ada")).PUT(BodyPublishers.noBody()).build(),
+				BodyHandlers.ofString());
+
+		assertThat(response.statusCode()).isEqualTo(201);
+		assertThat(response.headers().firstValue("Location")).hasValue(BASE_URL + "/Ada");
+		assertThat(response.headers().firstValue("X-Registered")).hasValue("Ada");
+	}
+
+	@Test
 	void securedResourceRefusesAnAnonymousCaller() throws Exception {
 		assertThat(whoami().statusCode()).isEqualTo(401);
 	}

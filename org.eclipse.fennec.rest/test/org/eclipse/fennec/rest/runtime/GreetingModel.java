@@ -13,6 +13,7 @@
 package org.eclipse.fennec.rest.runtime;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.eclipse.fennec.rest.model.rest.RestApplication;
 import org.eclipse.fennec.rest.model.rest.RestFactory;
 
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
 /**
@@ -62,6 +64,7 @@ final class GreetingModel {
 	final RestResource resource;
 	final RestResource secured;
 	final EOperation unknownContext;
+	final EOperation form;
 
 	GreetingModel() {
 		EcoreFactory ecore = EcoreFactory.eINSTANCE;
@@ -132,6 +135,24 @@ final class GreetingModel {
 		method(HttpMethod.GET, "broken", broken);
 		method(HttpMethod.GET, "orphan", orphan);
 
+		// --- what goes beyond a plain result: the delegate builds the response itself
+		EOperation created = operation(service, "created", dataType("Response", "jakarta.ws.rs.core.Response"),
+				DELEGATE_URI);
+		method(HttpMethod.POST, "created", created).setSuccessStatus(200);
+
+		EOperation matrix = operation(service, "matrix", string, DELEGATE_URI);
+		parameter(matrix, "color", string, 1);
+		bind(method(HttpMethod.GET, "matrix", matrix), matrix.getEParameters().get(0), ParameterSource.MATRIX, null,
+				"none");
+
+		form = operation(service, "form", string, DELEGATE_URI);
+		parameter(form, "name", string, -1);
+		parameter(form, "age", integer, 1);
+		RestMethod formMethod = method(HttpMethod.POST, "form", form);
+		formMethod.getConsumes().add("application/x-www-form-urlencoded");
+		bind(formMethod, form.getEParameters().get(0), ParameterSource.FORM, null, null);
+		bind(formMethod, form.getEParameters().get(1), ParameterSource.FORM, null, null);
+
 		// --- a second resource for request context and access control: every caller needs
 		// the role "user", unless a method says something else
 		EDataType principalType = dataType("Principal", "java.security.Principal");
@@ -200,6 +221,14 @@ final class GreetingModel {
 				return null;
 			case "tags":
 				return String.join("|", ((List<?>) arguments.get(0)).stream().map(String::valueOf).toList());
+			case "created":
+				return Response.created(URI.create("http://localhost/greetings/42")).header("X-Extra", "1")
+						.entity("made").build();
+			case "matrix":
+				return "color " + arguments.get(0);
+			case "form":
+				return String.join("|", ((List<?>) arguments.get(0)).stream().map(String::valueOf).toList()) + " aged "
+						+ arguments.get(1);
 			case "whoami":
 				return "I am " + arguments.get(0);
 			case "whoamiObject":

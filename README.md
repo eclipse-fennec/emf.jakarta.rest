@@ -45,12 +45,24 @@ transport details.
 
 | Outcome of the operation | Response |
 |---|---|
-| Result | 200 (or the modelled `successStatus`) with the result as entity |
+| A Jakarta RS `Response` | that response, unchanged |
+| Any other result | 200 (or the modelled `successStatus`) with the result as entity |
 | No result | 204 (or the modelled `successStatus`) |
 | Delegate throws a `WebApplicationException` | its response |
 | Delegate throws anything else | 500 |
 | Parameter literal cannot be converted | 400 |
 | No invocation delegate registered for a dynamic operation | 503 |
+
+The rule of thumb is the one of Jakarta RS itself: what annotations can express in Java is
+modelled on the `RestMethod`; everything beyond that (status by outcome, response headers,
+`Location`) is done by returning a `Response` from the delegate. In a dynamic model the return
+type is an `EDataType` with the instance class name `jakarta.ws.rs.core.Response`.
+
+## Parameter sources
+
+`PATH`, `QUERY`, `HEADER`, `COOKIE`, `MATRIX`, `FORM` and `BODY` correspond to the Jakarta RS
+parameter annotations; `defaultValue` corresponds to `@DefaultValue`. `FORM` and `BODY` cannot
+be combined on one method.
 
 ## Request context
 
@@ -87,7 +99,9 @@ close every modelled method and must not select a modelled application.
 
 ## Not covered yet
 
-- Response control from the delegate (headers, `Location`), streams and binary bodies.
+- Streams and binary bodies.
+- Lists of EObjects as result: the codec has no message body writer for collections yet.
+- `@BeanParam`, `@Encoded`, name-bound filters, asynchronous methods, sub-resource locators.
 - The request-scoped `ResourceSet` of the codec cannot be bound as a parameter yet.
 - The target EClass is instantiated per request and is stateless.
 - Many-valued body parameters are rejected when the model is interpreted.

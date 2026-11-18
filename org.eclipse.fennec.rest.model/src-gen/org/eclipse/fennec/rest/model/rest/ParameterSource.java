@@ -95,6 +95,32 @@ public enum ParameterSource implements Enumerator {
 	PRINCIPAL(5, "PRINCIPAL", "PRINCIPAL"),
 
 	/**
+	 * The '<em><b>MATRIX</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * A matrix parameter of the request path.
+	 * <!-- end-model-doc -->
+	 * @see #MATRIX_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	MATRIX(7, "MATRIX", "MATRIX"),
+
+	/**
+	 * The '<em><b>FORM</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * A field of a form-encoded request body. Cannot be combined with BODY.
+	 * <!-- end-model-doc -->
+	 * @see #FORM_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	FORM(8, "FORM", "FORM"),
+
+	/**
 	 * The '<em><b>CONTEXT</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -177,6 +203,34 @@ public enum ParameterSource implements Enumerator {
 	public static final int PRINCIPAL_VALUE = 5;
 
 	/**
+	 * The '<em><b>MATRIX</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * A matrix parameter of the request path.
+	 * <!-- end-model-doc -->
+	 * @see #MATRIX
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MATRIX_VALUE = 7;
+
+	/**
+	 * The '<em><b>FORM</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * A field of a form-encoded request body. Cannot be combined with BODY.
+	 * <!-- end-model-doc -->
+	 * @see #FORM
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int FORM_VALUE = 8;
+
+	/**
 	 * The '<em><b>CONTEXT</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -204,6 +258,8 @@ public enum ParameterSource implements Enumerator {
 			COOKIE,
 			BODY,
 			PRINCIPAL,
+			MATRIX,
+			FORM,
 			CONTEXT,
 		};
 
@@ -267,6 +323,8 @@ public enum ParameterSource implements Enumerator {
 			case COOKIE_VALUE: return COOKIE;
 			case BODY_VALUE: return BODY;
 			case PRINCIPAL_VALUE: return PRINCIPAL;
+			case MATRIX_VALUE: return MATRIX;
+			case FORM_VALUE: return FORM;
 			case CONTEXT_VALUE: return CONTEXT;
 		}
 		return null;
