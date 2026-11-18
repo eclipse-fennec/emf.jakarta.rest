@@ -61,7 +61,8 @@ type is an `EDataType` with the instance class name `jakarta.ws.rs.core.Response
 ## Parameter sources
 
 `PATH`, `QUERY`, `HEADER`, `COOKIE`, `MATRIX`, `FORM` and `BODY` correspond to the Jakarta RS
-parameter annotations; `defaultValue` corresponds to `@DefaultValue`. `FORM` and `BODY` cannot
+parameter annotations, `defaultValue` to `@DefaultValue` and `encoded` to `@Encoded` (the value
+arrives without URL decoding; `PATH`, `QUERY`, `MATRIX`, `FORM`). `FORM` and `BODY` cannot
 be combined on one method.
 
 ## Request context
@@ -101,7 +102,7 @@ close every modelled method and must not select a modelled application.
 
 - Streams and binary bodies.
 - Lists of EObjects as result: the codec has no message body writer for collections yet.
-- `@BeanParam`, `@Encoded`, name-bound filters, asynchronous methods, sub-resource locators.
+- `@BeanParam`, name-bound filters, asynchronous methods, sub-resource locators.
 - The request-scoped `ResourceSet` of the codec cannot be bound as a parameter yet.
 - The target EClass is instantiated per request and is stateless.
 - Many-valued body parameters are rejected when the model is interpreted.

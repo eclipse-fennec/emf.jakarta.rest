@@ -65,6 +65,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference rest.ecore#//ParameterBinding/parameter"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/source"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/encoded"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/defaultValue"/>
     </genClasses>
   </genPackages>

@@ -149,11 +149,40 @@ class ModelledApplicationTest {
 
 	@Test
 	void formFieldsArePassedToTheOperation() throws Exception {
-		Harness.Result result = call("POST", "greetings/form", "name=Ada&name=Bob&age=36", "Content-Type",
+		Harness.Result result = call("POST", "greetings/form", "name=Ada+L%26M&name=Bob&age=36", "Content-Type",
 				"application/x-www-form-urlencoded");
 
 		assertThat(result.status()).isEqualTo(200);
-		assertThat(result.body()).isEqualTo("Ada|Bob aged 36");
+		assertThat(result.body()).isEqualTo("Ada L&M|Bob aged 36");
+	}
+
+	@Test
+	void parametersAreUrlDecodedByDefault() throws Exception {
+		assertThat(call("GET", "greetings/a%20b%26c", null).body()).isEqualTo("Hello, a b&c!");
+		assertThat(call("GET", "greetings/matrix;color=dark%20red", null).body()).isEqualTo("color dark red");
+	}
+
+	@Test
+	void encodedPathParameterArrivesAsItStandsInTheRequest() throws Exception {
+		assertThat(call("GET", "greetings/raw/a%2Fb%20c", null).body()).isEqualTo("GreetingService:a%2Fb%20c");
+	}
+
+	@Test
+	void encodedQueryParameterArrivesAsItStandsInTheRequest() throws Exception {
+		assertThat(call("GET", "greetings/rawquery?q=x%20y%26z", null).body()).isEqualTo("GreetingService:x%20y%26z");
+	}
+
+	@Test
+	void encodedMatrixParameterArrivesAsItStandsInTheRequest() throws Exception {
+		assertThat(call("GET", "greetings/rawmatrix;color=dark%20red", null).body()).isEqualTo("color dark%20red");
+	}
+
+	@Test
+	void encodedFormFieldArrivesAsItStandsInTheRequestWhileTheOthersAreDecoded() throws Exception {
+		Harness.Result result = call("POST", "greetings/rawform", "name=Ada+L%26M&age=%33%36", "Content-Type",
+				"application/x-www-form-urlencoded");
+
+		assertThat(result.body()).isEqualTo("Ada+L%26M aged 36");
 	}
 
 	@Test

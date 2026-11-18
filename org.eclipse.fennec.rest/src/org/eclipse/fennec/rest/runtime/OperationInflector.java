@@ -14,7 +14,10 @@ package org.eclipse.fennec.rest.runtime;
 
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +42,6 @@ import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Cookie;
-import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.PathSegment;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
@@ -147,6 +149,8 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 	private Object resolve(EParameter parameter, ParameterBinding binding, ContainerRequestContext request) {
 		String name = binding.getName() == null || binding.getName().isBlank() ? parameter.getName()
 				: binding.getName();
+		// "encoded" hands the value over as it stands in the request
+		boolean decode = !binding.isEncoded();
 		List<String> literals;
 		switch (binding.getSource()) {
 		case BODY:
@@ -163,17 +167,17 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		case CONTEXT:
 			return RequestContexts.resolve(parameter.getEType().getInstanceClassName(), request);
 		case PATH:
-			literals = request.getUriInfo().getPathParameters().get(name);
+			literals = request.getUriInfo().getPathParameters(decode).get(name);
 			break;
 		case QUERY:
-			literals = request.getUriInfo().getQueryParameters().get(name);
+			literals = request.getUriInfo().getQueryParameters(decode).get(name);
 			break;
 		case HEADER:
 			literals = request.getHeaders().get(name);
 			break;
 		case MATRIX:
 			literals = null;
-			for (PathSegment segment : request.getUriInfo().getPathSegments()) {
+			for (PathSegment segment : request.getUriInfo().getPathSegments(decode)) {
 				List<String> values = segment.getMatrixParameters().get(name);
 				if (values != null) {
 					literals = values;
@@ -181,7 +185,10 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 			}
 			break;
 		case FORM:
-			literals = form(request).asMap().get(name);
+			literals = form(request).get(name);
+			if (literals != null && decode) {
+				literals = literals.stream().map(OperationInflector::decodeFormValue).toList();
+			}
 			break;
 		case COOKIE:
 			Cookie cookie = request.getCookies().get(name);
@@ -205,14 +212,39 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		return literals == null || literals.isEmpty() ? null : convert(parameter, name, literals.get(0));
 	}
 
-	/** The form of the request. The body can be read only once, so it is kept for the other fields. */
-	private static Form form(ContainerRequestContext request) {
+	/**
+	 * The fields of the form-encoded request body, with decoded names and raw values. The body
+	 * can be read only once, so the fields are kept at the request for the other bindings. They
+	 * are parsed here instead of read as a Jakarta RS {@code Form}, because that is always
+	 * decoded and an encoded binding needs the raw value.
+	 */
+	@SuppressWarnings("unchecked")
+	private static Map<String, List<String>> form(ContainerRequestContext request) {
 		Object form = request.getProperty(FORM_PROPERTY);
 		if (form == null) {
-			form = request.hasEntity() ? ((ContainerRequest) request).readEntity(Form.class) : new Form();
+			Map<String, List<String>> fields = new LinkedHashMap<>();
+			String body = request.hasEntity() ? ((ContainerRequest) request).readEntity(String.class) : "";
+			for (String pair : body.split("&")) {
+				if (pair.isEmpty()) {
+					continue;
+				}
+				int separator = pair.indexOf('=');
+				String field = decodeFormValue(separator < 0 ? pair : pair.substring(0, separator));
+				fields.computeIfAbsent(field, key -> new ArrayList<>())
+						.add(separator < 0 ? "" : pair.substring(separator + 1));
+			}
+			form = fields;
 			request.setProperty(FORM_PROPERTY, form);
 		}
-		return (Form) form;
+		return (Map<String, List<String>>) form;
+	}
+
+	private static String decodeFormValue(String value) {
+		try {
+			return URLDecoder.decode(value, StandardCharsets.UTF_8);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException("The form body is not properly encoded: " + value, e);
+		}
 	}
 
 	private Object readBody(EParameter parameter, ParameterBinding binding, ContainerRequestContext request) {

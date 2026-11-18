@@ -43,7 +43,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-@EPackage(uri = RestPackage.eNS_URI, fingerprint = "fp1:0c9e96018a5b29699718591ce123ae9e6f6be21d74b73710e8da10e58a2a5751", genModel = "/model/rest.genmodel", genModelSourceLocations = {"model/rest.genmodel","org.eclipse.fennec.rest.model/model/rest.genmodel"}, ecore = "/model/rest.ecore", ecoreSourceLocations = "/model/rest.ecore")
+@EPackage(uri = RestPackage.eNS_URI, fingerprint = "fp1:b37ff79f7d44d3c58d60aa853dbba839ddcae2efc8b55f1a368df18f1627c2fc", genModel = "/model/rest.genmodel", genModelSourceLocations = {"model/rest.genmodel","org.eclipse.fennec.rest.model/model/rest.genmodel"}, ecore = "/model/rest.ecore", ecoreSourceLocations = "/model/rest.ecore")
 public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.
@@ -452,13 +452,22 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	int PARAMETER_BINDING__NAME = 2;
 
 	/**
+	 * The feature id for the '<em><b>Encoded</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_BINDING__ENCODED = 3;
+
+	/**
 	 * The feature id for the '<em><b>Default Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PARAMETER_BINDING__DEFAULT_VALUE = 3;
+	int PARAMETER_BINDING__DEFAULT_VALUE = 4;
 
 	/**
 	 * The number of structural features of the '<em>Parameter Binding</em>' class.
@@ -467,7 +476,7 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PARAMETER_BINDING_FEATURE_COUNT = 4;
+	int PARAMETER_BINDING_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Parameter Binding</em>' class.
@@ -802,6 +811,17 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getParameterBinding_Name();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#isEncoded <em>Encoded</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Encoded</em>'.
+	 * @see org.eclipse.fennec.rest.model.rest.ParameterBinding#isEncoded()
+	 * @see #getParameterBinding()
+	 * @generated
+	 */
+	EAttribute getParameterBinding_Encoded();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#getDefaultValue <em>Default Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1090,6 +1110,14 @@ public interface RestPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute PARAMETER_BINDING__NAME = eINSTANCE.getParameterBinding_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Encoded</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARAMETER_BINDING__ENCODED = eINSTANCE.getParameterBinding_Encoded();
 
 		/**
 		 * The meta object literal for the '<em><b>Default Value</b></em>' attribute feature.

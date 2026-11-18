@@ -110,6 +110,12 @@
         <details key="documentation" value="The name of the path, query, header or cookie parameter. Defaults to the name of the EParameter. Unused for BODY."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="encoded" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="false">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Passes the value as it stands in the request, without URL decoding. Applies to PATH, QUERY, MATRIX and FORM, as jakarta.ws.rs.Encoded."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The literal that is used when the request does not carry the parameter."/>

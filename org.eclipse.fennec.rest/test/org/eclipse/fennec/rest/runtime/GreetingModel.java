@@ -153,6 +153,18 @@ final class GreetingModel {
 		bind(formMethod, form.getEParameters().get(0), ParameterSource.FORM, null, null);
 		bind(formMethod, form.getEParameters().get(1), ParameterSource.FORM, null, null);
 
+		// --- the same operations again, with parameters that are not URL decoded
+		bind(method(HttpMethod.GET, "raw/{text}", echo), echo.getEParameters().get(0), ParameterSource.PATH, null,
+				null).setEncoded(true);
+		bind(method(HttpMethod.GET, "rawquery", echo), echo.getEParameters().get(0), ParameterSource.QUERY, "q",
+				null).setEncoded(true);
+		bind(method(HttpMethod.GET, "rawmatrix", matrix), matrix.getEParameters().get(0), ParameterSource.MATRIX,
+				null, null).setEncoded(true);
+		RestMethod rawForm = method(HttpMethod.POST, "rawform", form);
+		rawForm.getConsumes().add("application/x-www-form-urlencoded");
+		bind(rawForm, form.getEParameters().get(0), ParameterSource.FORM, null, null).setEncoded(true);
+		bind(rawForm, form.getEParameters().get(1), ParameterSource.FORM, null, null);
+
 		// --- a second resource for request context and access control: every caller needs
 		// the role "user", unless a method says something else
 		EDataType principalType = dataType("Principal", "java.security.Principal");
@@ -262,14 +274,15 @@ final class GreetingModel {
 		return method;
 	}
 
-	private static void bind(RestMethod method, EParameter parameter, ParameterSource source, String name,
-			String defaultValue) {
+	private static ParameterBinding bind(RestMethod method, EParameter parameter, ParameterSource source,
+			String name, String defaultValue) {
 		ParameterBinding binding = RestFactory.eINSTANCE.createParameterBinding();
 		binding.setParameter(parameter);
 		binding.setSource(source);
 		binding.setName(name);
 		binding.setDefaultValue(defaultValue);
 		method.getParameters().add(binding);
+		return binding;
 	}
 
 	private static EOperation operation(EClass owner, String name, EClassifier type, String delegateUri) {

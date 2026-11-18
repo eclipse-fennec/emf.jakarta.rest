@@ -33,6 +33,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#getParameter <em>Parameter</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#getSource <em>Source</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#isEncoded <em>Encoded</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#getDefaultValue <em>Default Value</em>}</li>
  * </ul>
  *
@@ -114,6 +115,32 @@ public interface ParameterBinding extends EObject {
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Encoded</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Passes the value as it stands in the request, without URL decoding. Applies to PATH, QUERY, MATRIX and FORM, as jakarta.ws.rs.Encoded.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Encoded</em>' attribute.
+	 * @see #setEncoded(boolean)
+	 * @see org.eclipse.fennec.rest.model.rest.RestPackage#getParameterBinding_Encoded()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isEncoded();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.rest.model.rest.ParameterBinding#isEncoded <em>Encoded</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Encoded</em>' attribute.
+	 * @see #isEncoded()
+	 * @generated
+	 */
+	void setEncoded(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Default Value</b></em>' attribute.

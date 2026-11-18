@@ -36,6 +36,7 @@ import org.eclipse.fennec.rest.model.rest.RestPackage;
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.ParameterBindingImpl#getParameter <em>Parameter</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.ParameterBindingImpl#getSource <em>Source</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.ParameterBindingImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.ParameterBindingImpl#isEncoded <em>Encoded</em>}</li>
  *   <li>{@link org.eclipse.fennec.rest.model.rest.impl.ParameterBindingImpl#getDefaultValue <em>Default Value</em>}</li>
  * </ul>
  *
@@ -91,6 +92,26 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isEncoded() <em>Encoded</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEncoded()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ENCODED_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isEncoded() <em>Encoded</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEncoded()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean encoded = ENCODED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getDefaultValue() <em>Default Value</em>}' attribute.
@@ -223,6 +244,29 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
+	public boolean isEncoded() {
+		return encoded;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setEncoded(boolean newEncoded) {
+		boolean oldEncoded = encoded;
+		encoded = newEncoded;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RestPackage.PARAMETER_BINDING__ENCODED, oldEncoded, encoded));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getDefaultValue() {
 		return defaultValue;
 	}
@@ -255,6 +299,8 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 				return getSource();
 			case RestPackage.PARAMETER_BINDING__NAME:
 				return getName();
+			case RestPackage.PARAMETER_BINDING__ENCODED:
+				return isEncoded();
 			case RestPackage.PARAMETER_BINDING__DEFAULT_VALUE:
 				return getDefaultValue();
 		}
@@ -277,6 +323,9 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 				return;
 			case RestPackage.PARAMETER_BINDING__NAME:
 				setName((String)newValue);
+				return;
+			case RestPackage.PARAMETER_BINDING__ENCODED:
+				setEncoded((Boolean)newValue);
 				return;
 			case RestPackage.PARAMETER_BINDING__DEFAULT_VALUE:
 				setDefaultValue((String)newValue);
@@ -302,6 +351,9 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 			case RestPackage.PARAMETER_BINDING__NAME:
 				setName(NAME_EDEFAULT);
 				return;
+			case RestPackage.PARAMETER_BINDING__ENCODED:
+				setEncoded(ENCODED_EDEFAULT);
+				return;
 			case RestPackage.PARAMETER_BINDING__DEFAULT_VALUE:
 				setDefaultValue(DEFAULT_VALUE_EDEFAULT);
 				return;
@@ -323,6 +375,8 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 				return source != SOURCE_EDEFAULT;
 			case RestPackage.PARAMETER_BINDING__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case RestPackage.PARAMETER_BINDING__ENCODED:
+				return encoded != ENCODED_EDEFAULT;
 			case RestPackage.PARAMETER_BINDING__DEFAULT_VALUE:
 				return DEFAULT_VALUE_EDEFAULT == null ? defaultValue != null : !DEFAULT_VALUE_EDEFAULT.equals(defaultValue);
 		}
@@ -343,6 +397,8 @@ public class ParameterBindingImpl extends MinimalEObjectImpl.Container implement
 		result.append(source);
 		result.append(", name: ");
 		result.append(name);
+		result.append(", encoded: ");
+		result.append(encoded);
 		result.append(", defaultValue: ");
 		result.append(defaultValue);
 		result.append(')');

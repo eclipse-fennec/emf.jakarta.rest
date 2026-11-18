@@ -430,8 +430,18 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getParameterBinding_DefaultValue() {
+	public EAttribute getParameterBinding_Encoded() {
 		return (EAttribute)parameterBindingEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getParameterBinding_DefaultValue() {
+		return (EAttribute)parameterBindingEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -524,6 +534,7 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		createEReference(parameterBindingEClass, PARAMETER_BINDING__PARAMETER);
 		createEAttribute(parameterBindingEClass, PARAMETER_BINDING__SOURCE);
 		createEAttribute(parameterBindingEClass, PARAMETER_BINDING__NAME);
+		createEAttribute(parameterBindingEClass, PARAMETER_BINDING__ENCODED);
 		createEAttribute(parameterBindingEClass, PARAMETER_BINDING__DEFAULT_VALUE);
 
 		// Create enums
@@ -596,6 +607,7 @@ public class RestPackageImpl extends EPackageImpl implements RestPackage {
 		initEReference(getParameterBinding_Parameter(), ecorePackage.getEParameter(), null, "parameter", null, 1, 1, ParameterBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getParameterBinding_Source(), this.getParameterSource(), "source", "QUERY", 1, 1, ParameterBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getParameterBinding_Name(), ecorePackage.getEString(), "name", null, 0, 1, ParameterBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameterBinding_Encoded(), ecorePackage.getEBoolean(), "encoded", "false", 0, 1, ParameterBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getParameterBinding_DefaultValue(), ecorePackage.getEString(), "defaultValue", null, 0, 1, ParameterBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
