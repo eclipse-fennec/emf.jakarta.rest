@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2026 Contributors to the Eclipse Foundation.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;  Data In Motion Consulting - initial implementation"
+    modelDirectory="/org.eclipse.fennec.rest.model/src" modelPluginID="org.eclipse.fennec.rest.model"
+    modelName="Rest" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+  <foreignModel>rest.ecore</foreignModel>
+  <genPackages prefix="Rest" basePackage="org.eclipse.fennec.rest.model" resource="XMI"
+      disposableProviderFactory="true" ecorePackage="rest.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="rest.ecore#//HttpMethod">
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/GET"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/POST"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/PUT"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/DELETE"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/PATCH"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/HEAD"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//HttpMethod/OPTIONS"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="rest.ecore#//ParameterSource">
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/QUERY"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/PATH"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/HEADER"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/COOKIE"/>
+      <genEnumLiterals ecoreEnumLiteral="rest.ecore#//ParameterSource/BODY"/>
+    </genEnums>
+    <genClasses ecoreClass="rest.ecore#//RestApplication">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestApplication/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestApplication/basePath"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rest.ecore#//RestApplication/resources"/>
+    </genClasses>
+    <genClasses ecoreClass="rest.ecore#//RestResource">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestResource/path"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference rest.ecore#//RestResource/target"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestResource/consumes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestResource/produces"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rest.ecore#//RestResource/methods"/>
+    </genClasses>
+    <genClasses ecoreClass="rest.ecore#//RestMethod">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestMethod/httpMethod"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestMethod/path"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference rest.ecore#//RestMethod/operation"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestMethod/consumes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestMethod/produces"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//RestMethod/successStatus"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rest.ecore#//RestMethod/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="rest.ecore#//ParameterBinding">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference rest.ecore#//ParameterBinding/parameter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/source"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rest.ecore#//ParameterBinding/defaultValue"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

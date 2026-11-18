@@ -1,0 +1,17 @@
+{
+  ":configurator:resource-version": 1,
+
+  "org.apache.felix.http~restTestHttp": {
+    "org.osgi.service.http.port": "8198",
+    "org.osgi.service.http.host": "localhost",
+    "org.apache.felix.http.context_path": "/",
+    "org.apache.felix.http.name": "Modelled REST Test HTTP",
+    "org.apache.felix.http.runtime.init.id": "restTestHttp"
+  },
+
+  "JakartarsServletWhiteboardRuntimeComponent~restTest": {
+    "jersey.jakartars.whiteboard.name": "Modelled REST Test",
+    "jersey.context.path": "rest",
+    "osgi.http.whiteboard.target": "(id=restTestHttp)"
+  }
+}

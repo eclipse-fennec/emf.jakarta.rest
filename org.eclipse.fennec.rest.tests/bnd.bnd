@@ -1,0 +1,38 @@
+Bundle-Name: Fennec Modelled REST - OSGi Tests
+Bundle-Description: OSGi integration test and example for modelled Jakarta RS applications: a \
+ dynamic domain model (greeting.ecore), a REST binding model (greeting.rest) and an invocation \
+ delegate are deployed, and the resulting application is driven over HTTP through the real \
+ Jakarta RS whiteboard. The bundle contains no resource class and no generated model code.
+
+Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.annotation.Testable;CONCRETE}
+
+-library: \
+	enableOSGi-Test,\
+	enableEMF
+
+# org.eclipse.fennec.rest is the bundle under test (see -runrequires in test.bndrun). It is on
+# the buildpath so bnd/Gradle know this project depends on it and build it before resolving.
+-buildpath: \
+	org.osgi.framework;version=latest,\
+	org.osgi.service.cm;version=latest,\
+	org.osgi.service.component.annotations;version=latest,\
+	org.osgi.service.jakartars;version=latest,\
+	org.osgi.dto;version=latest,\
+	jakarta.ws.rs-api;version=latest,\
+	org.eclipse.fennec.rest.model;version=project,\
+	org.eclipse.fennec.rest;version=project
+
+Private-Package: org.eclipse.fennec.rest.tests
+
+# configs/ is picked up by the configurator from this bundle: it starts the test HTTP server
+# and the Jakarta RS whiteboard. model/ holds the two models the test deploys.
+-includeresource: \
+	OSGI-INF/configurator/=configs/,\
+	model/=model/
+
+# Without this the configurator ignores OSGI-INF/configurator/ in this bundle.
+Require-Capability: osgi.extender;filter:='(osgi.extender=osgi.configurator)'
+
+Bundle-Version: 1.0.0.SNAPSHOT
+
+-maven-release: local

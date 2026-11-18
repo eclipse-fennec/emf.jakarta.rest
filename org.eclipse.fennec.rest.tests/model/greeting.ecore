@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="greeting" nsURI="https://eclipse.org/fennec/rest/example/greeting/1.0" nsPrefix="greeting">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+    <details key="invocationDelegates" value="https://eclipse.org/fennec/rest/example/greeting/delegate"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="GreetingService">
+    <eOperations name="greet" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
+        <details key="body" value="greet"/>
+      </eAnnotations>
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="times" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eOperations>
+    <eOperations name="shout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
+        <details key="body" value="shout"/>
+      </eAnnotations>
+      <eParameters name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="describe" eType="#//Greeting">
+      <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
+        <details key="body" value="describe"/>
+      </eAnnotations>
+      <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="reply" eType="#//Greeting">
+      <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
+        <details key="body" value="reply"/>
+      </eAnnotations>
+      <eParameters name="greeting" eType="#//Greeting"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Greeting">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

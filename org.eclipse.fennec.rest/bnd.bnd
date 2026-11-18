@@ -1,0 +1,34 @@
+Bundle-Name: Fennec Modelled REST - Runtime
+Bundle-Description: Interprets a REST binding model at runtime: builds the Jakarta RS resources \
+ programmatically, registers them as an application at the Jakarta RS whiteboard and dispatches \
+ every request to the EMF invocation delegate of the bound EOperation
+
+-library: enableEMF
+
+# The interpreter uses the Jersey programmatic resource API (Resource.builder / ModelProcessor),
+# because Jakarta RS itself only knows annotated classes. This is the only Jersey-specific part.
+-buildpath: \
+	org.eclipse.fennec.rest.model;version=project,\
+	jakarta.ws.rs-api;version=latest,\
+	org.glassfish.jersey.core.jersey-server;version=latest,\
+	org.glassfish.jersey.core.jersey-common;version=latest,\
+	org.osgi.framework;version=latest,\
+	org.osgi.service.component;version=latest,\
+	org.osgi.service.component.annotations;version=latest,\
+	org.osgi.service.metatype.annotations;version=latest,\
+	org.osgi.service.jakartars;version=latest
+
+# The plain-JUnit tests run the interpreter in a bare Jersey ApplicationHandler, without HTTP
+# and without OSGi. That needs a complete Jersey server runtime on the path.
+-testpath: \
+	org.glassfish.jersey.core.jersey-client;version=latest,\
+	org.glassfish.jersey.inject.jersey-hk2;version=latest,\
+	org.glassfish.hk2.api;version=latest,\
+	org.glassfish.hk2.locator;version=latest,\
+	org.glassfish.hk2.utils;version=latest,\
+	org.glassfish.hk2.external.aopalliance-repackaged;version=latest,\
+	org.glassfish.hk2.osgi-resource-locator;version=latest,\
+	javassist;version=latest,\
+	jakarta.inject.jakarta.inject-api;version=latest,\
+	jakarta.annotation-api;version=latest,\
+	jakarta.validation.jakarta.validation-api;version=latest

@@ -1,0 +1,23 @@
+Bundle-Name: Fennec Modelled REST - Model
+Bundle-Description: Binding model for modelled Jakarta RS applications: resources, resource methods and \
+ parameter bindings that point to the EOperations of a domain model
+
+# sets the usually required buildpath using the bnd library
+-library: enableEMF
+
+src=${^src},src-gen
+
+-generate:\
+	model/rest.genmodel;\
+		generate=fennecEMF;\
+		lineEndings=lf;\
+		genmodel=model/rest.genmodel;\
+		output=src-gen
+
+# If this is not done with an instruction namespace, bnd would think you like
+# to take full control over whats exported and imported and will ignore @Export
+# Bundle Annotations
+-includeresource.model: model=model
+
+-buildpath: \
+	org.osgi.service.condition;version=latest
