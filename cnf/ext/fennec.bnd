@@ -19,6 +19,7 @@
 	fennecJacoco,\
 	fennecEMF,\
 	fennecCodec,\
+	fennecM2X,\
 	jakartaREST
 
 base-version: 1.0.0

@@ -1,0 +1,286 @@
+-- Copyright (c) 2026 Contributors to the Eclipse Foundation.
+--
+-- This program and the accompanying materials are made
+-- available under the terms of the Eclipse Public License 2.0
+-- which is available at https://www.eclipse.org/legal/epl-2.0/
+--
+-- SPDX-License-Identifier: EPL-2.0
+--
+-- Derives the server side of an OpenAPI document:
+--   service : a package with one service EClass, whose EOperations are the path operations
+--   binding : the REST binding model that maps the paths to those operations
+--
+-- It is the QVT-O counterpart of org.eclipse.fennec.rest.openapi.OpenApiRestImporter and is
+-- tested against it. The input is the document as the Fennec codec loads it: the codec has
+-- already turned components/schemas into EClasses and linked every schema to its classifier.
+
+modeltype OAS uses 'https://eclipse.org/fennec/openapi/3';
+modeltype JS uses 'https://eclipse.org/fennec/jsonschema';
+modeltype ECORE uses ecore('http://www.eclipse.org/emf/2002/Ecore');
+modeltype REST uses 'https://eclipse.org/fennec/rest/1.0.0';
+
+transformation OpenApiToRest(in api : OAS, out service : ECORE, out binding : REST);
+
+configuration property applicationName : String;
+configuration property applicationBasePath : String;
+configuration property serviceNsUri : String;
+configuration property delegateUri : String;
+
+main() {
+	api.rootObjects()[OpenAPI]->map toServicePackage();
+	api.rootObjects()[OpenAPI]->map toApplication();
+}
+
+-- ---------------------------------------------------------------------------------------
+-- the service: operations like Java methods
+-- ---------------------------------------------------------------------------------------
+
+mapping OpenAPI::toServicePackage() : EPackage {
+	name := identifier(applicationName);
+	nsPrefix := identifier(applicationName);
+	nsURI := serviceNsUri;
+	eAnnotations += object EAnnotation {
+		source := 'http://www.eclipse.org/emf/2002/Ecore';
+		details += object EStringToStringMapEntry {
+			key := 'invocationDelegates';
+			value := delegateUri;
+		};
+	};
+	eClassifiers += self.map toServiceClass();
+}
+
+mapping OpenAPI::toServiceClass() : EClass {
+	name := identifier(applicationName).firstToUpper() + 'Service';
+	eOperations += self.paths.value->collect(item | item.operations())->map toOperation();
+}
+
+mapping Operation::toOperation() : EOperation {
+	init {
+		var operationName : String := self.operationName();
+		var method : String := self.httpMethod();
+		var path : String := self.pathTemplate();
+	}
+	name := identifier(operationName);
+	eType := self.responseType();
+	upperBound := if self.responseIsArray() and not self.responseType().oclIsUndefined() then -1 else 1 endif;
+	eAnnotations += object EAnnotation {
+		source := delegateUri;
+		details += object EStringToStringMapEntry { key := 'operationId'; value := operationName; };
+		details += object EStringToStringMapEntry { key := 'method'; value := method; };
+		details += object EStringToStringMapEntry { key := 'path'; value := path; };
+	};
+	eParameters += self.parameters->select(p | p.usable())->map toParameter();
+	if (not self.bodyClass().oclIsUndefined()) then {
+		eParameters += self.requestBody.map toBodyParameter();
+	} endif;
+}
+
+mapping Parameter::toParameter() : EParameter {
+	name := identifier(self.name);
+	eType := parameterType(self.schema);
+	lowerBound := if self.required = true then 1 else 0 endif;
+}
+
+mapping RequestBody::toBodyParameter() : EParameter {
+	name := 'body';
+	eType := self.container().oclAsType(Operation).bodyClass();
+}
+
+-- ---------------------------------------------------------------------------------------
+-- the binding
+-- ---------------------------------------------------------------------------------------
+
+mapping OpenAPI::toApplication() : RestApplication {
+	name := applicationName;
+	basePath := applicationBasePath;
+	resources += self.paths->select(entry | entry.value.operations()->notEmpty())->map toResource();
+}
+
+mapping PathItemEntry::toResource() : RestResource {
+	path := self.key;
+	target := self.container().oclAsType(OpenAPI).map toServiceClass();
+	methods += self.value.operations()->map toMethod();
+}
+
+mapping Operation::toMethod() : RestMethod {
+	init {
+		var roles : OrderedSet(String) := self.scopes();
+		var secured : Boolean := self.effectiveSecurity()->notEmpty();
+	}
+	httpMethod := methodLiteral(self.httpMethod());
+	operation := self.map toOperation();
+	successStatus := self.successStatus();
+	parameters += self.parameters->select(p | p.usable())->map toBinding();
+	if (not self.bodyClass().oclIsUndefined()) then {
+		parameters += self.requestBody.map toBodyBinding();
+		consumes += 'application/json';
+	} endif;
+	if (not self.responseType().oclIsUndefined()) then {
+		produces += 'application/json';
+	} endif;
+	rolesAllowed += roles;
+	if (secured and roles->isEmpty()) then {
+		access := Access::AUTHENTICATED;
+	} endif;
+}
+
+mapping Parameter::toBinding() : ParameterBinding {
+	parameter := self.map toParameter();
+	source := sourceLiteral(self.location());
+	-- the name on the wire is kept where it is no valid parameter name, e.g. X-Trace-Id
+	if (identifier(self.name) <> self.name) then {
+		name := self.name;
+	} endif;
+}
+
+mapping RequestBody::toBodyBinding() : ParameterBinding {
+	parameter := self.map toBodyParameter();
+	source := ParameterSource::BODY;
+}
+
+-- ---------------------------------------------------------------------------------------
+-- reading the document
+-- ---------------------------------------------------------------------------------------
+
+query PathItem::operations() : Sequence(Operation) {
+	return Sequence{self.get, self.put, self._'post', self.delete, self.options, self.head, self.patch}
+		->select(operation | not operation.oclIsUndefined());
+}
+
+query Operation::document() : OpenAPI {
+	return self.container().container().container().oclAsType(OpenAPI);
+}
+
+query Operation::pathTemplate() : String {
+	return self.container().container().oclAsType(PathItemEntry).key;
+}
+
+query Operation::httpMethod() : String {
+	var item : PathItem := self.container().oclAsType(PathItem);
+	return if item.get = self then 'GET'
+		else if item.put = self then 'PUT'
+		else if item._'post' = self then 'POST'
+		else if item.delete = self then 'DELETE'
+		else if item.options = self then 'OPTIONS'
+		else if item.head = self then 'HEAD'
+		else 'PATCH' endif endif endif endif endif endif;
+}
+
+query Operation::operationName() : String {
+	return if self.operationId.oclIsUndefined() or self.operationId = '' then
+			self.httpMethod().toLowerCase() + self.pathTemplate().replaceAll('[{}]', '').replaceAll('/', '_')
+		else self.operationId endif;
+}
+
+query Parameter::location() : String {
+	return self._'in'.toString();
+}
+
+query Parameter::usable() : Boolean {
+	return not self.name.oclIsUndefined()
+		and Sequence{'path', 'query', 'header', 'cookie'}->includes(self.location());
+}
+
+-- The JSON schema of a content map, or null.
+helper jsonSchema(content : Collection(MediaTypeEntry)) : Schema {
+	return if content->exists(entry | entry.key = 'application/json') then
+			content->any(entry | entry.key = 'application/json').value.schema
+		else null endif;
+}
+
+query Operation::bodyClass() : EClass {
+	return if self.requestBody.oclIsUndefined() then null
+		else classOf(jsonSchema(self.requestBody.content)) endif;
+}
+
+-- The entry of the success response: 200, else 201, else the first 2xx, else default.
+query Operation::successKey() : String {
+	return if self.responses->exists(entry | entry.key = '200') then '200'
+		else if self.responses->exists(entry | entry.key = '201') then '201'
+		else if self.responses->exists(entry | entry.key.startsWith('2')) then
+			self.responses->any(entry | entry.key.startsWith('2')).key
+		else if self.responses->exists(entry | entry.key = 'default') then 'default'
+		else null endif endif endif endif;
+}
+
+query Operation::responseSchema() : Schema {
+	var key : String := self.successKey();
+	return if key.oclIsUndefined() then null
+		else jsonSchema(self.responses->any(entry | entry.key = key).value.content) endif;
+}
+
+query Operation::responseIsArray() : Boolean {
+	var schema : Schema := self.responseSchema();
+	return if schema.oclIsUndefined() then false
+		else schema.type->exists(type | type.toString() = 'array') and not schema.items.oclIsUndefined() endif;
+}
+
+query Operation::responseType() : EClass {
+	var schema : Schema := self.responseSchema();
+	return if schema.oclIsUndefined() then null
+		else if self.responseIsArray() then classOf(schema.items)
+		else classOf(schema) endif endif;
+}
+
+-- The status is only modelled when it is not what the runtime answers anyway.
+query Operation::successStatus() : Integer {
+	var key : String := self.successKey();
+	return if key.oclIsUndefined() then 0
+		else if key = '200' or key = '204' or not key.matches('[0-9]+') then 0
+		else key.toInteger() endif endif;
+}
+
+-- The EClass the codec generated for a schema, or null.
+helper classOf(schema : Schema) : EClass {
+	return if schema.oclIsUndefined() then null
+		else if schema.classifier.oclIsKindOf(EClass) then schema.classifier.oclAsType(EClass)
+		else null endif endif;
+}
+
+-- The type of a parameter: what the codec linked the schema to, a string otherwise.
+helper parameterType(schema : Schema) : EClassifier {
+	return if schema.oclIsUndefined() then EString.oclAsType(EClassifier)
+		else if schema.classifier.oclIsUndefined() then EString.oclAsType(EClassifier)
+		else schema.classifier endif endif;
+}
+
+-- ---------------------------------------------------------------------------------------
+-- security: an authenticated caller, the scopes as roles
+-- ---------------------------------------------------------------------------------------
+
+query Operation::effectiveSecurity() : Sequence(SecurityRequirement) {
+	return if self.security->isEmpty() then self.document().security->asSequence()
+		else self.security->asSequence() endif;
+}
+
+query Operation::scopes() : OrderedSet(String) {
+	return self.effectiveSecurity()->collect(requirement | requirement.schemes)
+		->collect(entry | entry.value)->asOrderedSet();
+}
+
+-- ---------------------------------------------------------------------------------------
+-- names and literals
+-- ---------------------------------------------------------------------------------------
+
+-- A name that is valid for an Ecore element: everything else becomes an underscore.
+helper identifier(name : String) : String {
+	var cleaned : String := name.replaceAll('[^\\p{L}\\p{N}_$]', '_');
+	return if cleaned.matches('[\\p{L}_$].*') then cleaned else '_' + cleaned endif;
+}
+
+helper methodLiteral(method : String) : HttpMethod {
+	return if method = 'GET' then HttpMethod::GET
+		else if method = 'PUT' then HttpMethod::PUT
+		else if method = 'POST' then HttpMethod::POST
+		else if method = 'DELETE' then HttpMethod::DELETE
+		else if method = 'OPTIONS' then HttpMethod::OPTIONS
+		else if method = 'HEAD' then HttpMethod::HEAD
+		else HttpMethod::PATCH endif endif endif endif endif endif;
+}
+
+helper sourceLiteral(location : String) : ParameterSource {
+	return if location = 'path' then ParameterSource::PATH
+		else if location = 'header' then ParameterSource::HEADER
+		else if location = 'cookie' then ParameterSource::COOKIE
+		else ParameterSource::QUERY endif endif endif;
+}

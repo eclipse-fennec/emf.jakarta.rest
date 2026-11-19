@@ -145,3 +145,5 @@ org.eclipse.fennec.util:org.eclipse.fennec.service.api:1.0.0-SNAPSHOT
 tools.jackson.core:jackson-core:3.3.0
 tools.jackson.core:jackson-databind:3.3.0
 com.fasterxml.jackson.core:jackson-annotations:2.23
+
+org.eclipse.fennec.m2x:org.eclipse.fennec.m2x.library.workspace:0.1.1-SNAPSHOT

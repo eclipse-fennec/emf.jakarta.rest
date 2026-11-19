@@ -32,6 +32,7 @@ transport details.
 | `org.eclipse.fennec.rest.model` | `model/rest.ecore`, the binding model |
 | `org.eclipse.fennec.rest` | Interpreter and OSGi components |
 | `org.eclipse.fennec.rest.openapi` | Derives an application from an OpenAPI document |
+| `org.eclipse.fennec.rest.openapi.qvto` | The same derivation as a QVT-O transformation (Fennec M2X) |
 | `org.eclipse.fennec.rest.tests` | OSGi integration test and example (`model/greeting.ecore`, `model/greeting.rest`, `GreetingDelegateFactory`) |
 
 ## Build
@@ -129,12 +130,51 @@ schemas, no non-JSON bodies. What cannot be imported faithfully is logged as a d
 security requirements that need several scopes at once or offer alternatives (roles mean
 "one of").
 
+## The OpenAPI import as a QVT-O transformation
+
+`org.eclipse.fennec.rest.openapi.qvto` contains `OpenApiToRest.qvto`, which derives service
+package and binding model from the loaded OpenAPI model, and `OpenApiQvtoImporter`, which runs
+it with the Fennec M2X engine. `QvtoMatchesJavaImportTest` imports the same document with both
+variants and requires an identical result. For the pet store document of the tests it is.
+
+So the mapping itself is expressible in QVT-O without blackbox Java. What was learned about the
+limits, all with the M2X snapshot 0.1.1:
+
+Observed
+
+- **Keyword-named features.** `PathItem.post` and `Parameter.in` collide with keywords and have
+  to be written `self._'post'` and `self._'in'`. `self._post` also parses, but is a different
+  name and only fails when the transformation runs (`Unknown property '_post'`).
+- **Qualified type names.** `OAS::OpenAPI`, with the model type alias as qualifier, is an
+  unknown type; the names have to be unqualified. Two metamodels with a class of the same name
+  would then be ambiguous. Qualifying with the package name was not tried.
+- **Output extents list everything.** `getContents()` of an out extent returns every created
+  object, also the contained ones. The caller picks the roots.
+- **Read-only input.** The schemas package belongs to the input model. Giving it its own
+  namespace, and making the packages roots of resources, is left to Java after the run.
+- **Loading is outside.** The transformation starts from the model the codec loaded and relies
+  on what the codec computed while loading (the link from a schema to its classifier). Reading
+  the JSON or YAML document is not something the transformation does.
+- **Regular expressions** (`replaceAll`, `matches`) are available and were needed for the
+  names; they are an extension of the OCL library, not standard OCL.
+
+Not done or not verified
+
+- No diagnostics: the Java importer reports security requirements that roles cannot express
+  exactly, unsupported HTTP methods and duplicate operation names. The transformation maps
+  silently. `log()` would be the means; it was not tried.
+- Only operation-level parameters are read. The importer of emf.util also resolves
+  path-level and `$ref` parameters, so other documents may show differences.
+- One document was compared. The fallback type for a parameter without schema
+  (`EString.oclAsType(EClassifier)`) is type-checked but never executed by the test.
+- The transformation runs in plain Java in the test. It is not run under OSGi and the
+  `OpenApiApplication` component still uses the Java importer.
+
 ## Not covered yet
 
 - Streams and binary bodies.
 - Lists of EObjects as result: the codec has no released message body writer for collections
   yet (eclipse-fennec/emf.codec#334).
-- The OpenAPI import as a QVT transformation (emf.m2x) instead of Java.
 - `@BeanParam`, name-bound filters, asynchronous methods, sub-resource locators.
 - The request-scoped `ResourceSet` of the codec cannot be bound as a parameter yet.
 - The target EClass is instantiated per request and is stateless.
