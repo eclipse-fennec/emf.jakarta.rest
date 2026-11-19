@@ -5,10 +5,16 @@ Bundle-Description: Interprets a REST binding model at runtime: builds the Jakar
 
 -library: enableEMF
 
+# The codec is only needed to read EObject bodies; an application of plain values runs without it.
+Import-Package: \
+	org.eclipse.fennec.codec.rest.annotations.json;resolution:=optional,\
+	*
+
 # The interpreter uses the Jersey programmatic resource API (Resource.builder / ModelProcessor),
 # because Jakarta RS itself only knows annotated classes. This is the only Jersey-specific part.
 -buildpath: \
 	org.eclipse.fennec.rest.model;version=project,\
+	org.eclipse.fennec.codec.rest;version=latest,\
 	jakarta.ws.rs-api;version=latest,\
 	org.glassfish.jersey.core.jersey-server;version=latest,\
 	org.glassfish.jersey.core.jersey-common;version=latest,\

@@ -12,6 +12,7 @@
  */
 package org.eclipse.fennec.rest.runtime;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.net.URLDecoder;
@@ -258,10 +259,21 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 			// a dynamic data type or enum only has a literal form
 			return convert(parameter, "body", containerRequest.readEntity(String.class));
 		}
-		if (instanceClass == null) {
-			instanceClass = EObject.class;
+		if (type instanceof EClass eClass) {
+			// the codec learns the type of the body from the model, not from the body
+			Class<?> bodyClass = instanceClass == null ? EObject.class : instanceClass;
+			return containerRequest.readEntity(bodyClass, bodyClass, rootType(eClass));
 		}
 		return containerRequest.readEntity(WRAPPERS.getOrDefault(instanceClass, instanceClass));
+	}
+
+	/** The codec's root type hint; none if the codec is not installed. */
+	private static Annotation[] rootType(EClass eClass) {
+		try {
+			return RootType.of(eClass);
+		} catch (LinkageError e) {
+			return new Annotation[0];
+		}
 	}
 
 	private Object convert(EParameter parameter, String name, String literal) {

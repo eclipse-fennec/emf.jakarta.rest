@@ -115,7 +115,8 @@ class ModelledGreetingIT {
 	@Test
 	void dynamicEObjectBodyIsReadByTheCodec() throws Exception {
 		HttpResponse<String> response = post("/reply", "application/json", "application/json",
-				"{\"_type\":\"https://eclipse.org/fennec/rest/example/greeting/1.0#//Greeting\",\"name\":\"Ada\",\"text\":\"Hi\"}");
+				// no type information in the body: the EParameter says what it is
+				"{\"name\":\"Ada\",\"text\":\"Hi\"}");
 
 		assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
 		assertThat(response.body()).contains("Re: Hi");
