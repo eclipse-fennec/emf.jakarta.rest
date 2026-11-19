@@ -43,6 +43,16 @@ transport details.
 ./gradlew :org.eclipse.fennec.rest.tests:testOSGi # over HTTP through the real whiteboard
 ```
 
+## Next to compiled resources
+
+A modelled application is an ordinary whiteboard application, so compiled resources and
+extensions can be added to it with `osgi.jakartars.application.select`.
+
+With the name `.default` and the base path `/` it takes the place of the default application of
+the whiteboard. Whiteboard resources that select no application then run in it without any
+change, at the URLs they had. An existing application can be moved to a model resource by
+resource that way (`DefaultApplicationIT`).
+
 ## Response mapping
 
 | Outcome of the operation | Response |

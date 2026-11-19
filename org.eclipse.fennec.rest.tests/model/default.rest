@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A modelled application that takes the place of the default application of the whiteboard:
+     the reserved name ".default" and the base path "/". Whiteboard resources that select no
+     application end up in it, next to the modelled ones. -->
+<rest:RestApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:rest="https://eclipse.org/fennec/rest/1.0.0"
+    name=".default" basePath="/">
+  <properties key="test.default" value="modelled"/>
+  <resources path="modelled">
+    <target href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService"/>
+    <methods httpMethod="GET" path="{name}">
+      <operation href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/greet"/>
+      <produces>text/plain</produces>
+      <parameters source="PATH">
+        <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/greet/name"/>
+      </parameters>
+      <parameters source="QUERY" name="n" defaultValue="1">
+        <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/greet/times"/>
+      </parameters>
+    </methods>
+  </resources>
+</rest:RestApplication>
