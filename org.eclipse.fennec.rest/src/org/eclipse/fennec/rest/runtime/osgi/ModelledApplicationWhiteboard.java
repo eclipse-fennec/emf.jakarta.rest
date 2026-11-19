@@ -48,8 +48,9 @@ import jakarta.ws.rs.core.Application;
  * as an authentication filter are attached to a modelled application.
  * </p>
  * <p>
- * A model is interpreted when its service arrives. A model that cannot be interpreted is logged
- * and skipped; it does not affect the other applications.
+ * A model is interpreted when Jersey initialises its application. A model that cannot be
+ * interpreted is logged and makes that initialisation fail; it does not affect the other
+ * applications.
  * </p>
  */
 @Component
@@ -70,14 +71,9 @@ public class ModelledApplicationWhiteboard {
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 	void addApplication(RestApplication model) {
-		Application application;
-		try {
-			application = new ModelledApplication(model);
-		} catch (RuntimeException e) {
-			LOGGER.log(Level.SEVERE, e,
-					() -> "The modelled REST application '" + model.getName() + "' is not deployed: " + e.getMessage());
-			return;
-		}
+		// deferred: this method runs on whatever thread brings the model, where Jersey must not be touched
+		Application application = ModelledApplication.deferred(model, e -> LOGGER.log(Level.SEVERE, e,
+				() -> "The modelled REST application '" + model.getName() + "' cannot be deployed: " + e.getMessage()));
 		Dictionary<String, Object> properties = new Hashtable<>();
 		// modelled properties first, so they cannot replace what the whiteboard relies on
 		model.getProperties().forEach(property -> properties.put(property.getKey(), property.getValue()));

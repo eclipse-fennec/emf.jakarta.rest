@@ -13,6 +13,7 @@
 package org.eclipse.fennec.rest.runtime;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.glassfish.jersey.server.model.ModelProcessor;
 import org.glassfish.jersey.server.model.Resource;
@@ -31,16 +32,28 @@ import jakarta.ws.rs.core.Configuration;
  */
 class ModelledResourceProcessor implements ModelProcessor {
 
-	private final List<Resource> resources;
+	private final Supplier<List<Resource>> interpretation;
+	private List<Resource> resources;
 
-	ModelledResourceProcessor(List<Resource> resources) {
-		this.resources = List.copyOf(resources);
+	/**
+	 * @param interpretation builds the resources. It is asked once, when Jersey processes the
+	 *                       resource model of the application, not before.
+	 */
+	ModelledResourceProcessor(Supplier<List<Resource>> interpretation) {
+		this.interpretation = interpretation;
+	}
+
+	private synchronized List<Resource> resources() {
+		if (resources == null) {
+			resources = List.copyOf(interpretation.get());
+		}
+		return resources;
 	}
 
 	@Override
 	public ResourceModel processResourceModel(ResourceModel resourceModel, Configuration configuration) {
 		ResourceModel.Builder builder = new ResourceModel.Builder(resourceModel, false);
-		resources.forEach(builder::addResource);
+		resources().forEach(builder::addResource);
 		return builder.build();
 	}
 
