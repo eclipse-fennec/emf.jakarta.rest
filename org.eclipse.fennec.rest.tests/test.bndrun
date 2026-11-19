@@ -21,6 +21,7 @@
 	bnd.identity;id='org.eclipse.fennec.rest.tests',\
 	bnd.identity;id='org.eclipse.fennec.rest',\
 	bnd.identity;id='org.eclipse.fennec.rest.model',\
+	bnd.identity;id='org.eclipse.fennec.rest.openapi',\
 	bnd.identity;id='org.eclipse.fennec.codec.rest',\
 	bnd.identity;id='org.eclipse.fennec.codec',\
 	bnd.identity;id='org.eclipse.fennec.emf.osgi.component',\

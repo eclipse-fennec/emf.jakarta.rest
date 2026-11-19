@@ -1,0 +1,40 @@
+Bundle-Name: Fennec Modelled REST - OpenAPI
+Bundle-Description: Brings up a modelled Jakarta RS application from an OpenAPI document: the \
+ schemas become the domain model, every path operation becomes an EOperation of a service \
+ EClass, and the REST binding model maps the paths to those operations. The behaviour comes \
+ from an EMF invocation delegate registered for the configured delegate URI.
+
+-library: enableEMF
+
+# The OpenAPI document is loaded and linked by the importer of emf.util on top of the codec's
+# OpenAPI model; this bundle only derives the server side from that.
+-buildpath: \
+	org.eclipse.fennec.rest.model;version=project,\
+	org.eclipse.fennec.openapi.ecore;version=latest,\
+	org.eclipse.fennec.service.api;version=latest,\
+	org.eclipse.fennec.openapi.model;version=latest,\
+	org.eclipse.fennec.emf.osgi.api;version=latest,\
+	org.eclipse.fennec.emf.osgi.component.minimal;version=latest,\
+	org.osgi.framework;version=latest,\
+	org.osgi.service.component;version=latest,\
+	org.osgi.service.component.annotations;version=latest,\
+	org.osgi.service.metatype.annotations;version=latest
+
+# The plain-JUnit tests import a document for real, which needs the codec pipeline, and
+# interpret the result, which needs a Jersey server runtime.
+-testpath: \
+	org.eclipse.fennec.rest;version=project,\
+	org.eclipse.fennec.emf.osgi.component.minimal;version=latest,\
+	org.eclipse.fennec.emf.osgi.metadata;version=latest,\
+	org.eclipse.fennec.codec;version=latest,\
+	org.eclipse.fennec.codec.api;version=latest,\
+	org.eclipse.fennec.codec.openapi;version=latest,\
+	org.eclipse.fennec.codec.jsonschema;version=latest,\
+	org.eclipse.fennec.codec.jsonschema.model;version=latest,\
+	org.eclipse.fennec.codec.metadata;version=latest,\
+	tools.jackson.core.jackson-core;version=latest,\
+	tools.jackson.core.jackson-databind;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
+	jakarta.ws.rs-api;version=latest,\
+	org.glassfish.jersey.core.jersey-server;version=latest,\
+	org.glassfish.jersey.core.jersey-common;version=latest

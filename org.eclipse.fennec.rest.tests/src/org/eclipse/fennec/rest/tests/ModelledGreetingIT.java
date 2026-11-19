@@ -187,7 +187,7 @@ class ModelledGreetingIT {
 	 * Waits until the whiteboard has deployed the application, and fails with the whiteboard's
 	 * own view when it does not. Without this a wiring problem only shows as an opaque 404.
 	 */
-	private static void awaitApplication(JakartarsServiceRuntime runtime, String name) throws Exception {
+	static void awaitApplication(JakartarsServiceRuntime runtime, String name) throws Exception {
 		long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
 		RuntimeDTO dto = null;
 		while (System.currentTimeMillis() < deadline) {

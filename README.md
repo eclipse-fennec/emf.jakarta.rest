@@ -31,6 +31,7 @@ transport details.
 |---|---|
 | `org.eclipse.fennec.rest.model` | `model/rest.ecore`, the binding model |
 | `org.eclipse.fennec.rest` | Interpreter and OSGi components |
+| `org.eclipse.fennec.rest.openapi` | Derives an application from an OpenAPI document |
 | `org.eclipse.fennec.rest.tests` | OSGi integration test and example (`model/greeting.ecore`, `model/greeting.rest`, `GreetingDelegateFactory`) |
 
 ## Build
@@ -98,10 +99,42 @@ Annotation-driven security features (`@RolesAllowed` scanners) see nothing on a 
 resource, because there is no resource class. A deny-by-default feature of that kind would
 close every modelled method and must not select a modelled application.
 
+## From an OpenAPI document
+
+One factory configuration brings up a complete application:
+
+```json
+"org.eclipse.fennec.rest.OpenApiApplication~petstore": {
+  "name": "petstore",
+  "documentUrl": "file:/.../petstore.json",
+  "delegateUri": "https://example.org/petstore/logic"
+}
+```
+
+| Document | Becomes |
+|---|---|
+| `components/schemas` | the domain EPackage (by the codec, namespace `<nsUri>/schemas`) |
+| every path operation | an `EOperation` of the service EClass `<Name>Service`, named by its `operationId` |
+| parameters and request body | individual `EParameter`s, bound where the document puts them |
+| the chosen 2xx JSON response | the result type; an array is a many-valued result |
+| a `security` requirement | an authenticated caller; its scopes as `rolesAllowed` |
+
+The business logic is one `EOperation.Internal.InvocationDelegate.Factory` service registered
+for `delegateUri`. Every operation carries an annotation with that URI as source and the
+details `operationId`, `method` and `path`.
+
+The document is loaded and linked by the `OpenApiImporter` of emf.util, which also serves the
+client side, so its limits apply: only the first 2xx `application/json` response, only `$ref`
+schemas, no non-JSON bodies. What cannot be imported faithfully is logged as a diagnostic, e.g.
+security requirements that need several scopes at once or offer alternatives (roles mean
+"one of").
+
 ## Not covered yet
 
 - Streams and binary bodies.
-- Lists of EObjects as result: the codec has no message body writer for collections yet.
+- Lists of EObjects as result: the codec has no released message body writer for collections
+  yet (eclipse-fennec/emf.codec#334).
+- The OpenAPI import as a QVT transformation (emf.m2x) instead of Java.
 - `@BeanParam`, name-bound filters, asynchronous methods, sub-resource locators.
 - The request-scoped `ResourceSet` of the codec cannot be bound as a parameter yet.
 - The target EClass is instantiated per request and is stateless.
