@@ -14,6 +14,8 @@ package org.eclipse.fennec.rest.runtime;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.security.Principal;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +45,7 @@ import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.PathSegment;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
@@ -117,8 +120,39 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 					.build();
 		}
 		return Response.status(successStatus == 0 ? Response.Status.OK.getStatusCode() : successStatus)
-				.entity(result).build();
+				.entity(entity(result)).build();
 	}
+
+	/**
+	 * A many-valued result of EObjects is handed on with its element type. The list alone does
+	 * not tell a message body writer what it holds: dynamic models use the same list class for
+	 * references and attributes.
+	 */
+	private Object entity(Object result) {
+		if (operation.isMany() && operation.getEType() instanceof EClass && result instanceof List<?> list) {
+			return new GenericEntity<>(list, EOBJECT_LIST);
+		}
+		return result;
+	}
+
+	/** {@code List<EObject>} */
+	private static final ParameterizedType EOBJECT_LIST = new ParameterizedType() {
+
+		@Override
+		public Type[] getActualTypeArguments() {
+			return new Type[] { EObject.class };
+		}
+
+		@Override
+		public Type getRawType() {
+			return List.class;
+		}
+
+		@Override
+		public Type getOwnerType() {
+			return null;
+		}
+	};
 
 	/**
 	 * A dynamic instance has no behaviour but its invocation delegate. EMF caches a

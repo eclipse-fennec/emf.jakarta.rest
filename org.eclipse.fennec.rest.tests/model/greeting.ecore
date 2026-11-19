@@ -24,6 +24,11 @@
       </eAnnotations>
       <eParameters name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eOperations>
+    <eOperations name="all" upperBound="-1" eType="#//Greeting">
+      <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
+        <details key="body" value="all"/>
+      </eAnnotations>
+    </eOperations>
     <eOperations name="reply" eType="#//Greeting">
       <eAnnotations source="https://eclipse.org/fennec/rest/example/greeting/delegate">
         <details key="body" value="reply"/>

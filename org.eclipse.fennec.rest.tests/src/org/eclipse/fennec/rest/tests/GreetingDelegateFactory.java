@@ -15,6 +15,7 @@ package org.eclipse.fennec.rest.tests;
 import java.net.URI;
 import java.util.Collections;
 
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -60,6 +61,10 @@ public class GreetingDelegateFactory implements EOperation.Internal.InvocationDe
 			// beyond what a model can declare: the delegate builds the response itself
 			return (target, arguments) -> Response.created(URI.create("greetings/" + arguments.get(0)))
 					.header("X-Registered", arguments.get(0)).build();
+		case "all":
+			// many-valued: the result is a list of dynamic EObjects
+			return (target, arguments) -> ECollections.asEList(greeting(target, "Ada", "Hello, Ada!"),
+					greeting(target, "Grace", "Hello, Grace!"));
 		case "reply":
 			return GreetingDelegateFactory::reply;
 		default:

@@ -33,6 +33,10 @@
         <parameter href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/describe/name"/>
       </parameters>
     </methods>
+    <methods httpMethod="GET">
+      <operation href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/all"/>
+      <produces>application/json</produces>
+    </methods>
     <methods httpMethod="POST" path="reply">
       <operation href="https://eclipse.org/fennec/rest/example/greeting/1.0#//GreetingService/reply"/>
       <consumes>application/json</consumes>

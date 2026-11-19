@@ -113,6 +113,15 @@ class ModelledGreetingIT {
 	}
 
 	@Test
+	void listOfDynamicEObjectsIsWrittenAsArray() throws Exception {
+		HttpResponse<String> response = get("", "application/json");
+
+		assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
+		assertThat(response.body().strip()).startsWith("[").endsWith("]");
+		assertThat(response.body()).contains("Hello, Ada!").contains("Hello, Grace!");
+	}
+
+	@Test
 	void dynamicEObjectBodyIsReadByTheCodec() throws Exception {
 		HttpResponse<String> response = post("/reply", "application/json", "application/json",
 				// no type information in the body: the EParameter says what it is

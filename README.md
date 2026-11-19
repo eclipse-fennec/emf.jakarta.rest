@@ -48,6 +48,7 @@ transport details.
 | Outcome of the operation | Response |
 |---|---|
 | A Jakarta RS `Response` | that response, unchanged |
+| A list of EObjects (many-valued operation typed by an EClass) | 200 (or the modelled `successStatus`) with a JSON array, also for one or no element |
 | Any other result | 200 (or the modelled `successStatus`) with the result as entity |
 | No result | 204 (or the modelled `successStatus`) |
 | Delegate throws a `WebApplicationException` | its response |
@@ -59,6 +60,11 @@ The rule of thumb is the one of Jakarta RS itself: what annotations can express 
 modelled on the `RestMethod`; everything beyond that (status by outcome, response headers,
 `Location`) is done by returning a `Response` from the delegate. In a dynamic model the return
 type is an `EDataType` with the instance class name `jakarta.ws.rs.core.Response`.
+
+A many-valued result is handed to the codec as `List<EObject>` (a `GenericEntity`), because the
+list of a dynamic model does not tell what it holds. A delegate that returns a `Response` with a
+list of dynamic EObjects has to wrap it in a `GenericEntity` itself. Many-valued body parameters
+are not read yet.
 
 ## Parameter sources
 
@@ -173,8 +179,6 @@ Not done or not verified
 ## Not covered yet
 
 - Streams and binary bodies.
-- Lists of EObjects as result: the codec has no released message body writer for collections
-  yet (eclipse-fennec/emf.codec#334).
 - `@BeanParam`, name-bound filters, asynchronous methods, sub-resource locators.
 - The request-scoped `ResourceSet` of the codec cannot be bound as a parameter yet.
 - The target EClass is instantiated per request and is stateless.
