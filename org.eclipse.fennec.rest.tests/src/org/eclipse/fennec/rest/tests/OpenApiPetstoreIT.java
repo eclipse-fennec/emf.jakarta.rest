@@ -95,8 +95,9 @@ class OpenApiPetstoreIT {
 	}
 
 	@Test
-	void pathParameterOfTheWrongTypeIsABadRequest() throws Exception {
-		assertThat(send(HttpRequest.newBuilder(URI.create(PETS + "/rex")).GET()).statusCode()).isEqualTo(400);
+	void pathParameterOfTheWrongTypeIsNotFound() throws Exception {
+		// as Jakarta RS answers for a @PathParam that cannot be converted
+		assertThat(send(HttpRequest.newBuilder(URI.create(PETS + "/rex")).GET()).statusCode()).isEqualTo(404);
 	}
 
 	@Test

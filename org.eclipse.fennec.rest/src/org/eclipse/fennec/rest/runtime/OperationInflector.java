@@ -41,6 +41,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -239,12 +240,23 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 			List<Object> values = new ArrayList<>();
 			if (literals != null) {
 				for (String literal : literals) {
-					values.add(convert(parameter, name, literal));
+					values.add(convert(parameter, binding, name, literal));
 				}
 			}
 			return values;
 		}
-		return literals == null || literals.isEmpty() ? null : convert(parameter, name, literals.get(0));
+		if (literals == null || literals.isEmpty()) {
+			return null;
+		}
+		String literal = literals.get(0);
+		if (literal.isBlank() && !(parameter.getEType().getInstanceClass() == String.class)) {
+			// as in Jakarta RS: a value that is there but empty is no value, except for a string
+			if (binding.getDefaultValue() != null) {
+				return convert(parameter, binding, name, binding.getDefaultValue());
+			}
+			return parameter.getEType().getDefaultValue();
+		}
+		return convert(parameter, binding, name, literal);
 	}
 
 	/**
@@ -284,14 +296,14 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 
 	private Object readBody(EParameter parameter, ParameterBinding binding, ContainerRequestContext request) {
 		if (!request.hasEntity()) {
-			return binding.getDefaultValue() == null ? null : convert(parameter, "body", binding.getDefaultValue());
+			return binding.getDefaultValue() == null ? null : convert(parameter, binding, "body", binding.getDefaultValue());
 		}
 		ContainerRequest containerRequest = (ContainerRequest) request;
 		EClassifier type = parameter.getEType();
 		Class<?> instanceClass = type.getInstanceClass();
 		if (type instanceof EDataType && instanceClass == null) {
 			// a dynamic data type or enum only has a literal form
-			return convert(parameter, "body", containerRequest.readEntity(String.class));
+			return convert(parameter, binding, "body", containerRequest.readEntity(String.class));
 		}
 		if (type instanceof EClass eClass) {
 			// the codec learns the type of the body from the model, not from the body
@@ -310,7 +322,12 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		}
 	}
 
-	private Object convert(EParameter parameter, String name, String literal) {
+	/**
+	 * A literal that is not a value of the type refuses the request the way Jakarta RS does for
+	 * the annotation the binding stands for: 404 where the value is part of the URI (path, query,
+	 * matrix), 400 everywhere else.
+	 */
+	private Object convert(EParameter parameter, ParameterBinding binding, String name, String literal) {
 		if (!(parameter.getEType() instanceof EDataType dataType)) {
 			throw new BadRequestException("Parameter '" + name + "' is of type '" + parameter.getEType().getName()
 					+ "', which can only be bound to the body");
@@ -318,8 +335,13 @@ class OperationInflector implements Inflector<ContainerRequestContext, Response>
 		try {
 			return EcoreUtil.createFromString(dataType, literal);
 		} catch (RuntimeException e) {
-			throw new BadRequestException(
-					"Parameter '" + name + "' is not a valid " + dataType.getName() + ": " + literal, e);
+			String message = "Parameter '" + name + "' is not a valid " + dataType.getName() + ": " + literal;
+			switch (binding.getSource()) {
+			case PATH, QUERY, MATRIX:
+				throw new NotFoundException(message, e);
+			default:
+				throw new BadRequestException(message, e);
+			}
 		}
 	}
 }

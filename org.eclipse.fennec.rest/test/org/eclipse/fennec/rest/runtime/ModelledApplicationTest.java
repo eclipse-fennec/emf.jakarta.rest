@@ -105,9 +105,17 @@ class ModelledApplicationTest {
 		assertThat(call("GET", "greetings/broken", null).status()).isEqualTo(500);
 	}
 
+	/** As Jakarta RS has it for {@code @QueryParam}, {@code @PathParam} and {@code @MatrixParam}. */
 	@Test
-	void unconvertibleParameterIsABadRequest() throws Exception {
-		assertThat(call("GET", "greetings/Ada?n=many", null).status()).isEqualTo(400);
+	void unconvertibleQueryParameterIsNotFound() throws Exception {
+		assertThat(call("GET", "greetings/Ada?n=many", null).status()).isEqualTo(404);
+	}
+
+	/** As Jakarta RS has it: a value that is there but empty is no value for anything but a string. */
+	@Test
+	void emptyValueOfANumberIsTheDefault() throws Exception {
+		assertThat(call("GET", "greetings/Ada?n=", null).status()).isEqualTo(200);
+		assertThat(call("GET", "greetings/Ada?n=", null).body()).isEqualTo("Hello, Ada!");
 	}
 
 	@Test

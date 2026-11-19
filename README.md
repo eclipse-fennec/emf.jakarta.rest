@@ -63,7 +63,8 @@ resource that way (`DefaultApplicationIT`).
 | No result | 204 (or the modelled `successStatus`) |
 | Delegate throws a `WebApplicationException` | its response |
 | Delegate throws anything else | 500 |
-| Parameter literal cannot be converted | 400 |
+| Parameter literal cannot be converted | 404 for path, query and matrix parameters, 400 for the others (as Jakarta RS does) |
+| Parameter that is there but empty, for anything but a string | the default value of the binding, else that of the type |
 | No invocation delegate registered for a dynamic operation | 503 |
 
 The rule of thumb is the one of Jakarta RS itself: what annotations can express in Java is
