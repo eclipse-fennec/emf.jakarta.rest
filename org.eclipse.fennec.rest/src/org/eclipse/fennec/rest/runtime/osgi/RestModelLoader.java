@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.rest.model.rest.RestApplication;
+import org.eclipse.fennec.rest.model.rest.RestPackage;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentServiceObjects;
@@ -75,9 +76,18 @@ public class RestModelLoader {
 	private final ResourceSet resourceSet;
 	private final List<ServiceRegistration<RestApplication>> registrations = new ArrayList<>();
 
+	/**
+	 * @param restPackage the package of the binding model as a service. It is not used, it is
+	 *                    waited for: a ResourceSet announces a package as soon as the package
+	 *                    puts itself into the EMF registry, which a generated package does while
+	 *                    its {@code eINSTANCE} is still being initialised. A loader activated at
+	 *                    that moment, on the same thread, finds the package half built. The
+	 *                    service is only there once the package is complete.
+	 */
 	@Activate
 	public RestModelLoader(BundleContext context, Config config,
-			@Reference(name = "resourceSet") ComponentServiceObjects<ResourceSet> resourceSets) {
+			@Reference(name = "resourceSet") ComponentServiceObjects<ResourceSet> resourceSets,
+			@Reference RestPackage restPackage) {
 		this.resourceSets = resourceSets;
 		this.resourceSet = resourceSets.getService();
 		try {
