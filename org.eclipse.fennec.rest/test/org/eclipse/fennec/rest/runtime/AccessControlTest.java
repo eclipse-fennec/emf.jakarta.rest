@@ -159,6 +159,37 @@ class AccessControlTest {
 		assertThat(harness.call(NOBODY, "GET", "secured/open/required", null).status()).isEqualTo(403);
 	}
 
+	// --- the OPTIONS answer the framework generates for a path, which no modelled method describes
+
+	@Test
+	void optionsOfAnApplicationWithoutAccessRuleIsLeftToTheFramework() throws Exception {
+		assertThat(harness.call("OPTIONS", "greetings/Ada", null).status()).isEqualTo(200);
+		assertThat(harness.call("OPTIONS", "secured/whoami", null).status()).isEqualTo(200);
+	}
+
+	@Test
+	void optionsOfAClosedApplicationIsClosedEvenWhereAMethodIsPublic() throws Exception {
+		model.application.setAccess(Access.DENY);
+		harness = new Harness(model.application);
+
+		assertThat(harness.call("GET", "secured/open", null).status()).isEqualTo(200);
+		assertThat(harness.call("OPTIONS", "secured/open", null).status()).isEqualTo(403);
+		assertThat(harness.call(ADMIN, "OPTIONS", "secured/open", null).status()).isEqualTo(403);
+		assertThat(harness.call(ADMIN, "OPTIONS", "greetings/Ada", null).status()).isEqualTo(403);
+	}
+
+	@Test
+	void optionsNeedsTheRolesOfTheApplication() throws Exception {
+		model.application.getRolesAllowed().add("admin");
+		harness = new Harness(model.application);
+
+		assertThat(harness.call("OPTIONS", "secured/open", null).status()).isEqualTo(401);
+		assertThat(harness.call(USER, "OPTIONS", "secured/open", null).status()).isEqualTo(403);
+		Harness.Result allowed = harness.call(ADMIN, "OPTIONS", "greetings/Ada", null);
+		assertThat(allowed.status()).isEqualTo(200);
+		assertThat(allowed.headers().getFirst("Allow")).contains("GET").contains("HEAD").contains("OPTIONS");
+	}
+
 	@Test
 	void rolesCombinedWithPublicAccessAreRejectedWhenTheApplicationIsBuilt() {
 		model.secured.setAccess(Access.PUBLIC);

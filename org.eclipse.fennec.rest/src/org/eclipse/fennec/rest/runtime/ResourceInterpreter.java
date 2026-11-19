@@ -14,8 +14,10 @@ package org.eclipse.fennec.rest.runtime;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
@@ -25,8 +27,13 @@ import org.eclipse.fennec.rest.model.rest.ParameterSource;
 import org.eclipse.fennec.rest.model.rest.RestApplication;
 import org.eclipse.fennec.rest.model.rest.RestMethod;
 import org.eclipse.fennec.rest.model.rest.RestResource;
+import org.glassfish.jersey.process.Inflector;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
+
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Turns a {@link RestApplication} model into Jersey resources, using the programmatic resource
@@ -66,13 +73,57 @@ class ResourceInterpreter {
 		Resource.Builder root = Resource.builder(path);
 		// Jersey wants one child resource per sub path, carrying all HTTP methods of that path
 		Map<String, Resource.Builder> children = new LinkedHashMap<>();
+		Map<Resource.Builder, Set<String>> methodsOf = new LinkedHashMap<>();
 		for (RestMethod method : resource.getMethods()) {
 			String subPath = method.getPath();
 			Resource.Builder owner = subPath == null || subPath.isBlank() ? root
 					: children.computeIfAbsent(subPath, root::addChildResource);
 			interpret(resource, method, owner);
+			methodsOf.computeIfAbsent(owner, key -> new LinkedHashSet<>()).add(method.getHttpMethod().getName());
+		}
+		AccessRule ofApplication = resource.eContainer() instanceof RestApplication application
+				? AccessRule.of(application)
+				: null;
+		if (ofApplication != null) {
+			methodsOf.forEach((owner, methods) -> guardOptions(owner, methods, ofApplication));
 		}
 		return root.build();
+	}
+
+	/**
+	 * Jersey answers OPTIONS for every path by itself, with the methods the path has. No modelled
+	 * method describes that answer, so no rule of a method or resource is in effect for it: it
+	 * falls under the rule of the application. An application that restricts access answers
+	 * OPTIONS itself, after that rule has let the caller pass.
+	 */
+	private void guardOptions(Resource.Builder owner, Set<String> methods, AccessRule ofApplication) {
+		if (methods.contains(HttpMethod.OPTIONS)) {
+			return;
+		}
+		Set<String> allowed = new LinkedHashSet<>(methods);
+		if (allowed.contains(HttpMethod.GET)) {
+			allowed.add(HttpMethod.HEAD);
+		}
+		allowed.add(HttpMethod.OPTIONS);
+		owner.addMethod(HttpMethod.OPTIONS).handledBy(new GuardedOptions(ofApplication, allowed));
+	}
+
+	/** A class of its own: Jersey reads the types of an inflector from its class, which a lambda does not carry. */
+	private static final class GuardedOptions implements Inflector<ContainerRequestContext, Response> {
+
+		private final AccessRule rule;
+		private final Set<String> allowed;
+
+		GuardedOptions(AccessRule rule, Set<String> allowed) {
+			this.rule = rule;
+			this.allowed = allowed;
+		}
+
+		@Override
+		public Response apply(ContainerRequestContext request) {
+			rule.check(request.getSecurityContext());
+			return Response.ok().allow(allowed).build();
+		}
 	}
 
 	private void interpret(RestResource resource, RestMethod method, Resource.Builder owner) {

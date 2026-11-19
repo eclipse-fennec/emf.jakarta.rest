@@ -113,6 +113,11 @@ that sets the `SecurityContext`. It is attached through the model: `properties` 
 properties of the application, `extensionSelect` the extensions it requires. Access is checked
 before anything else of the request is looked at.
 
+The `OPTIONS` answer the framework generates for every path is described by no modelled method,
+so no rule of a method or resource applies to it: it falls under the rule of the application.
+An application without a rule leaves the answer to the framework. An application with
+`access="DENY"` and the roles on its resources is closed for everything that is not modelled.
+
 Annotation-driven security features (`@RolesAllowed` scanners) see nothing on a modelled
 resource, because there is no resource class. A deny-by-default feature of that kind would
 close every modelled method and must not select a modelled application.

@@ -67,6 +67,16 @@ record AccessRule(Access access, List<String> roles) {
 		return rule == null ? OPEN : rule;
 	}
 
+	/**
+	 * The rule the application states for itself, which also covers what no modelled method
+	 * describes.
+	 *
+	 * @return the rule, or {@code null} if the application says nothing
+	 */
+	static AccessRule of(RestApplication application) {
+		return own(application);
+	}
+
 	private static AccessRule own(Secured secured) {
 		Access access = secured.getAccess();
 		if (!secured.getRolesAllowed().isEmpty()) {
