@@ -28,7 +28,7 @@ maven/mavencentral/jakarta.xml.ws/jakarta.xml.ws-api/4.0.0, BSD-3-Clause, approv
 maven/mavencentral/net.bytebuddy/byte-buddy-agent/1.18.4, Apache-2.0, approved, #24657
 maven/mavencentral/net.bytebuddy/byte-buddy/1.18.4, Apache-2.0 AND BSD-3-Clause, approved, #24658
 maven/mavencentral/org.antlr/antlr4-runtime/4.13.2, BSD-3-Clause, approved, #10767
-maven/mavencentral/org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/1.3.7, Apache-2.0, approved, #15243
+maven/mavencentral/org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/1.3.8, Apache-2.0, approved, #15243
 maven/mavencentral/org.apache.aries.spifly/org.apache.aries.spifly.dynamic.framework.extension/1.3.6, Apache-2.0 AND BSD-3-Clause, approved, #9183
 maven/mavencentral/org.apache.aries.spifly/org.apache.aries.spifly.dynamic.framework.extension/1.3.8, Apache-2.0 AND BSD-3-Clause, approved, #9183
 maven/mavencentral/org.apache.commons/commons-compress/1.28.0, Apache-2.0 AND (Apache-2.0 AND BSD-3-Clause), approved, #22677
@@ -188,10 +188,15 @@ maven/mavencentral/org.osgi/org.osgi.test.junit5/1.3.0, Apache-2.0, approved, #1
 maven/mavencentral/org.osgi/org.osgi.util.converter/1.0.9, Apache-2.0, approved, #7155
 maven/mavencentral/org.osgi/org.osgi.util.function/1.2.0, Apache-2.0, approved, #29269
 maven/mavencentral/org.osgi/org.osgi.util.promise/1.3.0, Apache-2.0, approved, #5266
+maven/mavencentral/org.ow2.asm/asm-analysis/9.10.1, BSD-3-Clause, approved, #28387
 maven/mavencentral/org.ow2.asm/asm-analysis/9.6, BSD-3-Clause, approved, #10774
+maven/mavencentral/org.ow2.asm/asm-commons/9.10.1, BSD-3-Clause, approved, #28390
 maven/mavencentral/org.ow2.asm/asm-commons/9.6, BSD-3-Clause, approved, #10775
+maven/mavencentral/org.ow2.asm/asm-tree/9.10.1, BSD-3-Clause, approved, #28389
 maven/mavencentral/org.ow2.asm/asm-tree/9.6, BSD-3-Clause, approved, #10773
+maven/mavencentral/org.ow2.asm/asm-util/9.10.1, BSD-3-Clause, approved, #28388
 maven/mavencentral/org.ow2.asm/asm-util/9.6, BSD-3-Clause, approved, #10777
+maven/mavencentral/org.ow2.asm/asm/9.10.1, BSD-3-Clause, approved, #28386
 maven/mavencentral/org.ow2.asm/asm/9.6, BSD-3-Clause, approved, #10776
 maven/mavencentral/org.slf4j/slf4j-api/1.7.36, MIT, approved, CQ13368
 maven/mavencentral/org.slf4j/slf4j-api/2.0.20, MIT, approved, #5915

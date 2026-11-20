@@ -22,3 +22,6 @@ concurrency:
 jobs:
   verify:
     uses: eclipse-fennec/.github/.github/workflows/reusable-verify.yml@227b1dfa5f323fdd6d857d0a61fbaaf6e7288716 # v1.0.0
+    with:
+      # no perfTest task in this workspace
+      run-perf-tests: false

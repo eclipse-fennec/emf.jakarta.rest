@@ -23,4 +23,11 @@ org.osgi:org.osgi.dto:1.1.1
 # extension the libraries bring (see -runblacklist in the bndruns)
 org.apache.felix:org.apache.felix.framework:7.0.5
 org.apache.felix:org.apache.felix.http.jetty12:1.0.34
-org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.7
+org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.8
+
+# ASM for spifly 1.3.8, which reads Java 25 class files (the libraries bring 9.6)
+org.ow2.asm:asm:9.10.1
+org.ow2.asm:asm-analysis:9.10.1
+org.ow2.asm:asm-commons:9.10.1
+org.ow2.asm:asm-tree:9.10.1
+org.ow2.asm:asm-util:9.10.1
