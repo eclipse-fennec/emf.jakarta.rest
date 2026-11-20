@@ -1,0 +1,33 @@
+name: Snapshot Build
+
+on:
+  push:
+    branches:
+      - snapshot
+
+# Workflow-level ceiling for the called reusables. Only the docs deploy needs the
+# pages/id-token scopes; the credential-scoped release step gets its secrets via
+# `secrets: inherit` below (verify + docs never see them).
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: snapshot-publish
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    uses: eclipse-fennec/.github/.github/workflows/reusable-verify.yml@227b1dfa5f323fdd6d857d0a61fbaaf6e7288716 # v1.0.0
+
+  release:
+    needs: verify
+    uses: eclipse-fennec/.github/.github/workflows/reusable-release.yml@227b1dfa5f323fdd6d857d0a61fbaaf6e7288716 # v1.0.0
+    with:
+      do-release: false
+    secrets: inherit
+
+  docs:
+    needs: release
+    uses: eclipse-fennec/.github/.github/workflows/reusable-docs.yml@227b1dfa5f323fdd6d857d0a61fbaaf6e7288716 # v1.0.0

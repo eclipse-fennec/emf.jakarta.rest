@@ -1,0 +1,18 @@
+# A bnd workspace library: `-library: fennecRest` in the cnf of another workspace adds a Maven
+# repository with the bundles of the modelled REST runtime and everything they need at runtime.
+# The index of that repository is derived from the -runbundles of required.bndrun.
+-resourceonly: true
+-include: ${.}/buildpath.bnd
+mavendeps: ${sjoin;\n; ${template;-maven-dependencies;${@}}}
+
+-includeresource: {resources}
+
+Provide-Capability: \
+	${fennec-base}
+
+fennec-base:\
+    bnd.library;\
+        bnd.library     = fennecRest; \
+        path            = template
+Bundle-Name: Eclipse Fennec Modelled REST
+Bundle-Description: Eclipse Fennec Modelled REST Dependencies

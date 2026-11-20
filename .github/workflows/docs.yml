@@ -1,0 +1,18 @@
+name: Documentation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# No workflow-level concurrency here, deliberately: the reusable workflow's deploy
+# job already serialises on the job-level group `pages`. Declaring the same group
+# here makes the deploy job deadlock against its own workflow run - it is
+# cancelled before its first step (eclipse-fennec/.github#35).
+
+jobs:
+  docs:
+    uses: eclipse-fennec/.github/.github/workflows/reusable-docs.yml@227b1dfa5f323fdd6d857d0a61fbaaf6e7288716 # v1.0.0
