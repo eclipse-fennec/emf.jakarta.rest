@@ -18,6 +18,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -72,11 +73,18 @@ public class RestModelLoader {
 		String resourceSet_target() default "(emf.name=rest)";
 	}
 
+	/** What the configuration says to the loader itself. */
+	private static final Set<String> OWN = Set.of("model.uri", "resourceSet.target");
+
 	private final ComponentServiceObjects<ResourceSet> resourceSets;
 	private final ResourceSet resourceSet;
 	private final List<ServiceRegistration<RestApplication>> registrations = new ArrayList<>();
 
 	/**
+	 * @param configuration the properties of the configuration. Those that are not for the loader
+	 *                      become service properties of the applications of the model, and through
+	 *                      the whiteboard for modelled applications service properties of the
+	 *                      Jakarta RS applications.
 	 * @param restPackage the package of the binding model as a service. It is not used, it is
 	 *                    waited for: a ResourceSet announces a package as soon as the package
 	 *                    puts itself into the EMF registry, which a generated package does while
@@ -85,7 +93,7 @@ public class RestModelLoader {
 	 *                    service is only there once the package is complete.
 	 */
 	@Activate
-	public RestModelLoader(BundleContext context, Config config,
+	public RestModelLoader(BundleContext context, Config config, Map<String, Object> configuration,
 			@Reference(name = "resourceSet") ComponentServiceObjects<ResourceSet> resourceSets,
 			@Reference RestPackage restPackage) {
 		this.resourceSets = resourceSets;
@@ -93,6 +101,12 @@ public class RestModelLoader {
 		try {
 			for (RestApplication application : load(config.model_uri())) {
 				Dictionary<String, Object> properties = new Hashtable<>();
+				// whatever else the configuration says is meant for the application
+				configuration.forEach((key, value) -> {
+					if (!OWN.contains(key)) {
+						properties.put(key, value);
+					}
+				});
 				properties.put("fennec.rest.model.uri", config.model_uri());
 				properties.put("fennec.rest.model.name", application.getName());
 				registrations.add(context.registerService(RestApplication.class, application, properties));

@@ -113,6 +113,30 @@ that sets the `SecurityContext`. It is attached through the model: `properties` 
 properties of the application, `extensionSelect` the extensions it requires. Access is checked
 before anything else of the request is looked at.
 
+### Service properties of the application
+
+The Jakarta RS application of a model carries, from weak to strong:
+
+1. the `properties` of the model,
+2. the service properties of the `RestApplication` service. With the `RestModelLoader` these are
+   the properties of its configuration that are not its own (`model.uri`, `resourceSet.target`).
+   They replace a modelled property of the same name, so one model can be deployed more than once
+   with different values, and they follow when the service properties change,
+3. what the whiteboard relies on: `osgi.jakartars.name` and `osgi.jakartars.application.base`
+   are always the ones of the model, `emf=true` and `fennec.rest.modelled=<name>` are set, and
+   `osgi.jakartars.extension.select` is what the model requires plus what the service requires.
+
+The identity of the model service (id, PID, object class, scope, bundle, component) and private
+properties (starting with a dot) are not passed on.
+
+### Compiled resources in a modelled application
+
+A compiled whiteboard resource that selects a modelled application
+(`osgi.jakartars.application.select=(osgi.jakartars.name=<name>)`) is put there by the whiteboard
+like into any other application. The access rule of the model does not apply to it: `access` and
+`rolesAllowed` are rules of the modelled methods. Such a resource answers by its own annotations
+and by the extensions of the application.
+
 The `OPTIONS` answer the framework generates for every path is described by no modelled method,
 so no rule of a method or resource applies to it: it falls under the rule of the application.
 An application without a rule leaves the answer to the framework. An application with

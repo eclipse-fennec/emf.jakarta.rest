@@ -40,6 +40,8 @@ import org.osgi.service.jakartars.runtime.dto.RuntimeDTO;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 
+import jakarta.ws.rs.core.Application;
+
 /**
  * Deploys a completely modelled REST application and drives it over HTTP through the real
  * Jakarta RS whiteboard.
@@ -59,9 +61,14 @@ class ModelledGreetingIT {
 	private static final HttpClient CLIENT = HttpClient.newHttpClient();
 	private static final List<Configuration> CONFIGURATIONS = new ArrayList<>();
 
+	private static JakartarsServiceRuntime whiteboard;
+	private static BundleContext bundleContext;
+
 	@BeforeAll
 	static void deploy(@InjectBundleContext BundleContext context, @InjectService ConfigurationAdmin configAdmin,
 			@InjectService(timeout = 20000) JakartarsServiceRuntime runtime) throws Exception {
+		whiteboard = runtime;
+		bundleContext = context;
 		Dictionary<String, Object> domain = new Hashtable<>();
 		domain.put("emf.dynamicEcoreUri", context.getBundle().getEntry("model/greeting.ecore").toString());
 		CONFIGURATIONS.add(configure(configAdmin, "DynamicModelConfigurator", domain));
@@ -70,6 +77,8 @@ class ModelledGreetingIT {
 		binding.put("model.uri", context.getBundle().getEntry("model/greeting.rest").toString());
 		// only load the binding model once both the REST and the domain package are known
 		binding.put("resourceSet.target", "(&(emf.name=rest)(emf.name=greeting))");
+		// not for the loader: a service property of the application
+		binding.put("test.deployment", "greeting-it");
 		CONFIGURATIONS.add(configure(configAdmin, "org.eclipse.fennec.rest.RestModel", binding));
 
 		awaitApplication(runtime, "greeting");
@@ -163,6 +172,39 @@ class ModelledGreetingIT {
 
 		assertThat(response.statusCode()).isEqualTo(200);
 		assertThat(response.body()).isEqualTo("I am ada");
+	}
+
+	/** What the configuration of the loader says beyond the model becomes a service property of the application. */
+	@Test
+	void additionalPropertiesOfTheLoaderConfigurationReachTheApplication() throws Exception {
+		assertThat(bundleContext.getServiceReferences(Application.class,
+				"(&(fennec.rest.modelled=greeting)(test.deployment=greeting-it)(test.secured=true))")).hasSize(1);
+	}
+
+	/** A compiled resource selects the modelled application like any other, and the whiteboard puts it there. */
+	@Test
+	void compiledResourceThatSelectsTheApplicationAnswersInIt() throws Exception {
+		HttpResponse<String> response = CLIENT.send(
+				HttpRequest.newBuilder(URI.create(APPLICATION_URL + "/attached/Ada")).GET().build(), BodyHandlers.ofString());
+
+		assertThat(response.statusCode()).isEqualTo(200);
+		assertThat(response.body()).isEqualTo("Attached Ada");
+		assertThat(Arrays.stream(whiteboard.getRuntimeDTO().applicationDTOs)
+				.filter(application -> "greeting".equals(application.name))
+				.flatMap(application -> Arrays.stream(application.resourceDTOs)).map(resource -> resource.name))
+				.contains(AttachedResource.NAME);
+	}
+
+	/**
+	 * The access rule of the model is the rule of the modelled methods. A compiled resource in the
+	 * same application answers by its own annotations: here it has none, and an anonymous caller
+	 * gets through, although the modelled resource next to it refuses that caller.
+	 */
+	@Test
+	void compiledResourceIsNotUnderTheAccessRuleOfTheModel() throws Exception {
+		assertThat(whoami().statusCode()).isEqualTo(401);
+		assertThat(CLIENT.send(HttpRequest.newBuilder(URI.create(APPLICATION_URL + "/attached/Eve")).GET().build(),
+				BodyHandlers.ofString()).statusCode()).isEqualTo(200);
 	}
 
 	private static HttpResponse<String> whoami(String... headers) throws Exception {
