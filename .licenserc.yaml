@@ -30,6 +30,7 @@ header:
     - '**/*.ecore'
     - '**/*.xcore'
     - '**/*.genmodel'
+    - '**/*.rest'
     - '**/*.md'
     - '**/*.MD'
     - '**/.keep'
