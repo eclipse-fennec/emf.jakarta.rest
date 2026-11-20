@@ -6,8 +6,8 @@ operated under the [Eclipse Development Process](https://www.eclipse.org/project
 Contributions are welcome from the whole community.
 
 * Project home: https://projects.eclipse.org/projects/technology.fennec
-* This repository: https://github.com/eclipse-fennec/emf.rest
-* Issue tracker: https://github.com/eclipse-fennec/emf.rest/issues
+* This repository: https://github.com/eclipse-fennec/emf.jakarta.rest
+* Issue tracker: https://github.com/eclipse-fennec/emf.jakarta.rest/issues
 * Developer mailing list: https://accounts.eclipse.org/mailing-list/fennec-dev
 
 ## Eclipse Development Process
@@ -53,7 +53,7 @@ The conventions that matter most for contributors:
 
 ## Reporting issues
 
-* Search the [issue tracker](https://github.com/eclipse-fennec/emf.rest/issues)
+* Search the [issue tracker](https://github.com/eclipse-fennec/emf.jakarta.rest/issues)
   first — your problem may already be reported.
 * When filing a new issue, include the version of Fennec Modelled REST, the Java version
   and a minimal reproducer (the binding model and the request).
@@ -182,4 +182,4 @@ high-quality contributions over time, followed by a committer election.
 
 * Mailing list: [fennec-dev@eclipse.org](mailto:fennec-dev@eclipse.org)
   ([subscribe](https://accounts.eclipse.org/mailing-list/fennec-dev))
-* Issues: https://github.com/eclipse-fennec/emf.rest/issues
+* Issues: https://github.com/eclipse-fennec/emf.jakarta.rest/issues

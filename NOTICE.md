@@ -27,7 +27,7 @@ SPDX-License-Identifier: EPL-2.0
 
 The project maintains the following source code repository:
 
-* https://github.com/eclipse-fennec/emf.rest
+* https://github.com/eclipse-fennec/emf.jakarta.rest
 
 ## Third-party Content
 

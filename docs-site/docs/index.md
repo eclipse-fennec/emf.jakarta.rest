@@ -17,7 +17,7 @@ hero:
       link: /guides/binding-model
     - theme: alt
       text: View on GitHub
-      link: https://github.com/eclipse-fennec/emf.rest
+      link: https://github.com/eclipse-fennec/emf.jakarta.rest
 
 features:
   - icon: 🧭

@@ -21,7 +21,7 @@ const outDir = join(here, 'docs', 'guides'); // VitePress content root
 // Branch/ref used for the GitHub blob fallback links (internal docs are browsed
 // on GitHub, not published). Passed by CI; defaults to main for local builds.
 const branch = process.env.DOCS_BRANCH || 'main';
-const blobBase = `https://github.com/eclipse-fennec/emf.rest/blob/${branch}/docs`;
+const blobBase = `https://github.com/eclipse-fennec/emf.jakarta.rest/blob/${branch}/docs`;
 
 // docs-relative source path (posix) -> route slug, for the published set.
 const published = new Map(GUIDES.map((g) => [posix.normalize(g.file), slugFor(g.file)]));

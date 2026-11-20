@@ -3,16 +3,16 @@ import { GUIDES, slugFor } from '../../guides.mjs'
 
 // Per-project docs are served under a versioned sub-path, matching the org
 // convention (https://eclipse-fennec.github.io/<repo>/<version>/). The snapshot
-// branch publishes to /emf.rest/snapshot/; tagged releases / `latest` get added
+// branch publishes to /emf.jakarta.rest/snapshot/; tagged releases / `latest` get added
 // once the first release lands.
 const version = process.env.DOCS_BRANCH || 'snapshot'
-const base = `/emf.rest/${version}/`
+const base = `/emf.jakarta.rest/${version}/`
 
 // Canonical published origin. Links that point OUTSIDE the current docs base
 // (other doc versions) must be full URLs — VitePress auto-prepends `base` to any
 // root-absolute (`/…`) link, which would otherwise double the path. Links to
 // pages WITHIN this version stay base-relative (e.g. `/guides/getting-started`).
-const SITE = 'https://eclipse-fennec.github.io/emf.rest'
+const SITE = 'https://eclipse-fennec.github.io/emf.jakarta.rest'
 
 // Version selector. Only `snapshot` is deployed today; keep as data so adding
 // `latest` and tagged versions later is a one-liner.
@@ -80,12 +80,12 @@ export default defineConfig({
       '/guides/': sidebarGuides,
     },
 
-    socialLinks: [{ icon: 'github', link: 'https://github.com/eclipse-fennec/emf.rest' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/eclipse-fennec/emf.jakarta.rest' }],
 
     search: { provider: 'local' },
 
     editLink: {
-      pattern: 'https://github.com/eclipse-fennec/emf.rest/edit/main/docs/:path',
+      pattern: 'https://github.com/eclipse-fennec/emf.jakarta.rest/edit/snapshot/docs/:path',
       text: 'Edit this page on GitHub',
     },
 
